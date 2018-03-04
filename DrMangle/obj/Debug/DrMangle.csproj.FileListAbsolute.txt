@@ -1,0 +1,7 @@
+C:\Users\Elliott\source\repos\DrMangle\DrMangle\bin\Debug\DrMangle.exe.config
+C:\Users\Elliott\source\repos\DrMangle\DrMangle\bin\Debug\DrMangle.exe
+C:\Users\Elliott\source\repos\DrMangle\DrMangle\bin\Debug\DrMangle.pdb
+C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.csprojResolveAssemblyReference.cache
+C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.csproj.CoreCompileInputs.cache
+C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.exe
+C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.pdb
