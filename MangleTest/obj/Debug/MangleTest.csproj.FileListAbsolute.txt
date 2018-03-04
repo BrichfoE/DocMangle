@@ -1,0 +1,16 @@
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTest.TestAdapter.dll
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.Interface.dll
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.MSTestAdapter.PlatformServices.dll
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\MangleTest.dll
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\MangleTest.pdb
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.dll
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.dll
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.xml
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\Microsoft.VisualStudio.TestPlatform.TestFramework.Extensions.xml
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\obj\Debug\MangleTest.csprojResolveAssemblyReference.cache
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\obj\Debug\MangleTest.csproj.CoreCompileInputs.cache
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\obj\Debug\MangleTest.dll
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\obj\Debug\MangleTest.pdb
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\DrMangle.exe
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\DrMangle.pdb
+C:\Users\Elliott\source\repos\DrMangle\MangleTest\bin\Debug\DrMangle.exe.config
