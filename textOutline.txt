@@ -1,0 +1,70 @@
+game data
+	Data
+		GameName		
+	Methods		
+		save state
+		load state
+		generate tournament matchup
+		display tournament matchup
+		fight monsters
+
+
+player data
+	Data
+		name
+		fight record
+		monster
+			fight record
+			monster parts
+				head
+				torso
+				l-arm
+				l-leg
+				r-arm
+				r-leg
+				stats
+				buffs
+		bag inventory
+		shop inventory
+	Methods
+		store player data
+		update player data
+		generate random opponent data
+		display record
+		display inventory
+		display monster
+
+level data
+	Data
+		available monster parts
+	Methods
+		generate level available monster parts
+		search level for monster parts
+		assign remaining monster parts
+		
+Definitions
+	partType
+		1-head - buffs
+		2-torso - health
+		3-l-arm - defense
+		4-r-arm - attack
+		5-l-leg - dodge
+		6-r-leg - dodge
+	structure
+		1-biological
+		2-mechanical
+		3-enchanted
+		4-elemental
+	rarity
+		1-common
+		2-rare
+		3-epic
+		4-legendary
+		5-mythical
+		6-unicorn
+	stats
+		alacrity
+		strength
+		endurance
+		special
+
