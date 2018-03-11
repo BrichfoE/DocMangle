@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DrMangle
 {
-    public class PartData
+    public class PartData 
     {
         public string partName;
 
@@ -15,52 +15,45 @@ namespace DrMangle
         public int partRarity;
 
         public float[] stats;
-
-        //   0   public float partAlacrity;
-        //   1   public float partStrength;
-        //   2   public float partEndurance;
-        //   3   public float partSpecial;
-        
+       
         public float partDurability;
 
-        public PartData(bool newPart, int type, int structure, int rarity, float alacrity, float strength, float endurance, float special, float durability)
+        public PartData()
         {
             stats = new float[4];
+            GeneratePart();
+            GenerateStats();
+            GenerateName();
+        }
 
-            if (newPart)
-            {
-                GeneratePart();
-                if (type != 0)
-                {
-                    partType = type;
-                }
-                if (structure != 0)
-                {
-                    partStructure = structure;
-                }
-                if (rarity != 0)
-                {
-                    partRarity = rarity;
-                }
+        public PartData(int type, int structure, int rarity)
+        {
+        stats = new float[4];
 
-                GenerateStats();
-                GenerateName();
-            }
-            else
-            {
-                partType = type;
-                partStructure = structure;
-                partRarity = rarity;
+        partType = type;
+        partStructure = structure;
+        partRarity = rarity;
+             
+        GenerateStats();
+        GenerateName();
 
-                stats[0] = alacrity;
-                stats[1] = strength;
-                stats[2] = endurance;
-                stats[3] = special;
+        }
 
-                partDurability = durability;
+        public PartData(int type, int structure, int rarity, float alacrity, float strength, float endurance, float special, float durability)
+        { 
 
-                GenerateName();
-            }
+        partType = type;
+        partStructure = structure;
+        partRarity = rarity;
+
+        stats[0] = alacrity;
+        stats[1] = strength;
+        stats[2] = endurance;
+        stats[3] = special;
+
+        partDurability = durability;
+
+        GenerateName();
            
         }
 
@@ -204,25 +197,13 @@ namespace DrMangle
             stats[2] = rarityMult * eRoll * eSpecial;
             stats[3] = rarityMult * mRoll * mSpecial;
 
-            //if (partAlacrity > 9999)
-            //{
-            //    partAlacrity = 9999;
-            //}
-            //if (partStrength > 9999)
-            //{
-            //    partStrength = 9999;
-            //}
-            //if (partEndurance > 9999)
-            //{
-            //    partEndurance = 9999;
-            //}
-            //if (partSpecial > 9999)
-            //{
-            //    partSpecial = 9999;
-            //}
-
-            
-
+            for (int i = 0; i < 4; i++)
+            {
+                if (stats[i] > 16666.5f)
+                {
+                    stats[i] = 16666.5f;
+                }
+            }
         }
 
         private void GenerateName()
@@ -233,6 +214,53 @@ namespace DrMangle
 
             partName = rarity + " " + structure + " " + type;
         }
+    }
+
+    public class PartComparer : IComparer<PartData>
+    {
+        public int Compare(PartData x, PartData y)
+        {
+            if (x == null && y != null)
+            {
+                return 1;
+            }
+            else if (x != null && y == null)
+            {
+                return -1;
+            }
+            else if (x == null && y == null)
+            {
+                return 0;
+            }
+            else if (x.partStructure.CompareTo(y.partStructure) != 0)
+            {
+                return x.partStructure.CompareTo(y.partStructure);
+            }
+            else if (x.partRarity.CompareTo(y.partRarity) != 0)
+            {
+                return x.partRarity.CompareTo(y.partRarity);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        //public override bool Equals(object obj)
+        //{
+        //    return base.Equals(obj);
+        //}
+
+        //public override int GetHashCode()
+        //{
+        //    return base.GetHashCode();
+        //}
+
+        //public override string ToString()
+        //{
+        //    return base.ToString();
+        //}
+
 
     }
 
@@ -250,10 +278,10 @@ namespace DrMangle
         public static string[] structureList = new string[5]
             {
                   "Magical"
+                , "Animal"
                 , "Human"
                 , "Mechanical"
                 , "Rock"
-                , "Animal"
             };
         public static string[] rarityList = new string[6]
             {
@@ -265,27 +293,12 @@ namespace DrMangle
                , "Common"
             };
 
-        //static Anatomy()
-        //{
-
-        //    var rarityList = new string[6]
-        //    {
-        //         "Unicorn"
-        //       , "Mythic"
-        //       , "Legendary"
-        //       , "Epic"
-        //       , "Rare"
-        //       , "Common"
-        //    };
-
-        //    var structureList = new string[5]
-        //    { 
-        //          "Magical"
-        //        , "Human"
-        //        , "Mechanical"
-        //        , "Rock"
-        //        , "Animal"
-        //    };
-        //}
-    }           
+        public static string[] statList = new string[4]
+            {
+                  "Alacrity"
+                , "Strength"
+                , "Endurance"
+                , "Technique"
+            };
+    }
 }

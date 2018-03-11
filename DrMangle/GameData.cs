@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DrMangle
 {
-     class GameData
+     public class GameData
     {
         string gameName;
         int gameDataId;
@@ -17,39 +17,49 @@ namespace DrMangle
         public string regionText;
         public int aiPlayerCount;
 
+        public PlayerData[] allPlayers;
+
         public GameData(string name, int aiCount)
         {
             //somehow read file to find next available game ID
 
             gameName = name;
             currentLevel = new LevelData();
-            currentPlayer = new PlayerData("New Contestant");
+            currentPlayer = new HumanPlayerData("New Contestant");
             
             currentRegion = 0; //at the lab
             SetRegionText();
 
             aiPlayers = new PlayerData[aiPlayerCount];
             GenerateAI(aiPlayers);
+            var allPlayers = new PlayerData[aiCount + 1];
+            allPlayers[0] = currentPlayer;
+            for (int i = 0; i < aiPlayers.Length; i++)
+            {
+                allPlayers[i + 1] = aiPlayers[i];
+            }
         }
 
-        public GameData(int GameId)
-        {
-            string name = null;
-            LevelData level = null;
-            PlayerData player = null;
-            PlayerData[] ai = null;
+        //public GameData(int GameId)
+        //{
+        //    string name = null;
+        //    LevelData level = null;
+        //    PlayerData player = null;
+        //    PlayerData[] ai = null;
+        //    PlayerData[] all = null;
 
-            //somehow read file to get the right gameID
+        //    //somehow read file to get the right gameID
 
-            currentRegion = 0; //at the lab
-            SetRegionText();
+        //    currentRegion = 0; //at the lab
+        //    SetRegionText();
 
-            gameName = name;
-            currentLevel = level;
-            currentPlayer = player;
+        //    gameName = name;
+        //    currentLevel = level;
+        //    currentPlayer = player;
 
-            aiPlayers = ai;
-        }
+        //    aiPlayers = ai;
+        //    allPlayers = all;
+        //}
 
         public void SetRegionText()
         {
@@ -60,7 +70,32 @@ namespace DrMangle
         {
             for (int i = 0; i < ai.Length; i++)
             {
-                ai[i] = new PlayerData(i);
+                ai[i] = new AIPlayerData(i);
+            }
+        }
+
+        public void SortByWins()
+        {
+            for (int i = 0; i < allPlayers.Length; i++)
+            {
+                PlayerData left = allPlayers[i];
+                PlayerData high = allPlayers[i];
+                int highIndex = i;
+
+                for (int j = i + 1; j < allPlayers.Length; j++)
+                {
+                    if (high.Compare(high, allPlayers[j]) < 0)
+                    {
+                        high = allPlayers[j];
+                        highIndex = j;                        
+                    }
+                }
+
+                if (left != high)
+                {
+                    allPlayers[highIndex] = left;
+                    allPlayers[i] = high;
+                }
             }
         }
 

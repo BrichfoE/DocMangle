@@ -1,82 +1,266 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace DrMangle
 {
-    public class PlayerData
+    public abstract class PlayerData : IComparer<PlayerData>
     {
 
-        public string name;
-        public int wins;
-        public int fights;
-        public MonsterData monster;
-        public PartData[] bag;
-        public PartData[] workshop;
-        public int luck;
-        //biomatter
-        //components
-        //rocks
-        //ether
-        //money
+        public string Name { get; set; }
+        public int Wins { get; set; }
+        public int Fights { get; set; }
 
-        public PlayerData(string playerName)
-        {
-            name = playerName;
-            wins = 0;
-            fights = 0;
-            monster = null;
-            bag = new PartData[5];
-            workshop = new PartData[20];
-        }
+        public MonsterData Monster { get; set; }
+        public PartData[] Bag { get; set; }
+        public List<PartData> Workshop { get; set; }
+        public PartComparer _comparer;
 
-        public PlayerData(int randInt)
-        {
-            name = RandomName(randInt);
-            wins = 0;
-            fights = 0;
-            monster = null;
-            bag = new PartData[5];
-            workshop = new PartData[20];
-        }
-
-        public PlayerData(string playerName, int fightsWon, int fightsParticipated, MonsterData currentMonster, PartData[] currentBag, PartData[] currentShop)
-        {
-            name = playerName;
-            wins = fightsWon;
-            fights = fightsParticipated;
-            monster = currentMonster;
-            bag = currentBag;
-            workshop = currentShop;
-        }
-
-
+        public int Luck { get; set; }
+        public int Meat { get; set; }
+        public int Biomatter { get; set; }
+        public int Components { get; set; }
+        public int Rocks { get; set; }
+        public int Ether { get; set; }
+        public decimal Money { get; set; }
 
         //Methods
-            //add part to inventory
-            //remove part from inventory
-            //dump bag parts into inventory
-            //display inventory
-            //scrap inventory item        
+        public abstract void CheckBag();
 
-            //display monster
-            //add part to monster
-            //remove part from monster
-            //activate monster
-            //scrap monster
-            //repair mosnter
+        public void DumpBag()
+        {
+            for (int i = 0; i < Bag.Length; i++)
+            {
+                if (Bag[i] != null)
+                {
+                    Workshop.Add(Bag[i]);
+                    Bag[i] = null;
+                }
+            }
+            Workshop.Sort(_comparer);
+        }
 
-            //generate random opponent data
-            //display record
+        public void ScrapItem(PartData[] storage, int reference)
+        {
+            PartData part = storage[reference];
+            Random r = new Random();
+            int high = 2;
+            int amount = 1;
 
+            switch (part.partRarity)
+            {
+                case 0:
+                    high = 1000;
+                    break;
+                case 1:
+                    high = 500;
+                    break;
+                case 2:
+                    high = 200;
+                    break;
+                case 3:
+                    high = 100;
+                    break;
+                case 4:
+                    high = 50;
+                    break;
+                case 5:
+                    high = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartRarity");
+            }
 
+            amount = r.Next(high);
+
+            switch (part.partStructure)
+            {
+                case 0:
+                    Ether = Ether + amount;
+                    break;
+                case 1:
+                    Biomatter = Biomatter + amount;
+                    break;
+                case 2:
+                    Meat = Meat + amount;
+                    break;
+                case 3:
+                    Components = Components + amount;
+                    break;
+                case 4:
+                    Rocks = Rocks + amount;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartStructure");
+            }           
+
+            storage[reference] = null;
+            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.partStructure] + " parts.");
+        }
+
+        public void ScrapItem(List<PartData> storage, int reference)
+        {
+            PartData part = storage[reference];
+            Random r = new Random();
+            int high = 2;
+            int amount = 1;
+
+            switch (part.partRarity)
+            {
+                case 0:
+                    high = 1000;
+                    break;
+                case 1:
+                    high = 500;
+                    break;
+                case 2:
+                    high = 200;
+                    break;
+                case 3:
+                    high = 100;
+                    break;
+                case 4:
+                    high = 50;
+                    break;
+                case 5:
+                    high = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartRarity");
+            }
+
+            amount = r.Next(high);
+
+            switch (part.partStructure)
+            {
+                case 0:
+                    Ether = Ether + amount;
+                    break;
+                case 1:
+                    Biomatter = Biomatter + amount;
+                    break;
+                case 2:
+                    Meat = Meat + amount;
+                    break;
+                case 3:
+                    Components = Components + amount;
+                    break;
+                case 4:
+                    Rocks = Rocks + amount;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartStructure");
+            }
+
+            storage[reference] = null;
+            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.partStructure] + " parts.");
+            
+            storage.Sort(_comparer);
+        }
+
+        public void CheckWorkshop()
+        {
+            Workshop.Sort(_comparer);
+            Console.WriteLine("Workshop Items:");
+            foreach (var part in Workshop)
+            {
+                int count = 1;
+                if (part != null)
+                {
+                    Console.WriteLine(count + ": " + part.partName);
+                }
+
+            }
+        }
+
+        public int Compare(PlayerData x, PlayerData y)
+        {
+            if (x.Wins.CompareTo(y.Wins) != 0)
+            {
+                return x.Wins.CompareTo(y.Wins);
+            }
+            else if (x.Fights.CompareTo(y.Fights) != 0)
+            {
+                return x.Fights.CompareTo(y.Fights);
+            }
+            else if (x.Name.CompareTo(y.Name) != 0)
+            {
+                return x.Name.CompareTo(y.Name);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+
+    public class HumanPlayerData : PlayerData
+    {
+        public HumanPlayerData(string playerName)
+        {
+            Name = playerName;
+            Wins = 0;
+            Fights = 0;
+            Monster = null;
+            Bag = new PartData[5];
+            Workshop = new List<PartData>();
+            _comparer = new PartComparer();
+
+        }
+
+        public override void CheckBag()
+        {
+            int counter = 1;
+            foreach (var part in this.Bag)
+            {
+                if (part != null)
+                {
+                    Console.WriteLine(counter + " - " + part.partName);
+                    counter = counter + 1;
+                }
+            }
+        }
+
+    }
+
+    public class AIPlayerData : PlayerData
+    {
+        public AIPlayerData(int randInt)
+        {
+            Name = RandomName(randInt);
+            Wins = 0;
+            Fights = 0;
+            Monster = null;
+            Bag = new PartData[5];
+            Workshop = new List<PartData>();
+            _comparer = new PartComparer();
+        }
+        bool IsViewable { get; set; }
+
+        public override void CheckBag()
+        {
+            if (IsViewable)
+            {
+                int counter = 1;
+                foreach (var part in this.Bag)
+                {
+                    if (part != null)
+                    {
+                        Console.WriteLine(counter + " - " + part.partName);
+                        counter = counter + 1;
+                    }
+                }
+            }
+            else
+	        {
+                Console.WriteLine("Hands Off!");
+            }
+        }
 
         private string[] adjectives;
         private string[] names;
 
-        public string RandomName(int input)
+        private string RandomName(int input)
         {
             string result = "";
             Random r = new Random();
@@ -98,37 +282,24 @@ namespace DrMangle
             return result;
         }
     }
+
+    //public class LoadPlayerData : PlayerData
+    //{
+    //    protected LoadPlayerData(string playerName, int fightsWon, int fightsParticipated, MonsterData currentMonster, PartData[] currentBag, PartData[] currentShop)
+    //    {
+    //        Name = playerName;
+    //        Wins = fightsWon;
+    //        Fights = fightsParticipated;
+    //        Monster = currentMonster;
+    //        Bag = currentBag;
+    //        Workshop = currentShop;
+    //    }
+    //}
 }
 
 
 
 
 
-//public string Name
-//{
-//    get
-//    {
-//        return _name;
-//    }
-//    set
-//    {
-//        if (String.IsNullOrEmpty(value))
-//        {
-//            throw new ArgumentException("Name cannot be empty");
-//        }
 
-//        if (_name != value && NameChanged != null)
-//        {
-//            NameChangedEventArgs args = new NameChangedEventArgs();
-//            args.ExistingName = _name;
-//            args.NewName = value;
-
-//            NameChanged(this, args);
-//        }
-
-//        _name = value;
-
-//    }
-
-//}
 
