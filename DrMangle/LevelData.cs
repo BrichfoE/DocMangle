@@ -70,7 +70,8 @@ namespace DrMangle
 
                 for (int j = 0; j < roll; j++)
                 {
-                    PartData newPart = new PartData(true, 0, locations[i].ParkPart, 0, 0f, 0f, 0f, 0f, 0f);
+                    PartData newPart = new PartData();
+                    newPart.partStructure = locations[i].ParkPart;
                     locations[i].PartsList.AddLast(newPart);
                 }
             }

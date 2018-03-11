@@ -23,6 +23,8 @@ namespace DrMangle
             Console.WriteLine("Welcome to the Isle of Dr. Mangle.");
             Console.WriteLine("Please enter a name for your game data:");
             textInput = Console.ReadLine();
+            Console.WriteLine("And how many contestants will you be competing against?");
+            intInput = CheckInput(1, 7);
             GameData gd = new GameData(textInput, 3);
 
 
@@ -78,7 +80,7 @@ namespace DrMangle
 
             #region fight
             TalkPause("Welcome to the evening's entertainment!");
-            if (gd.currentPlayer.monster != null && gd.currentPlayer.monster.CanFight())
+            if (gd.currentPlayer.Monster != null && gd.currentPlayer.Monster.CanFight())
             {
                 Console.WriteLine("Would you like to particpate tonight?");
                 TalkPause("1 - Yes, 2 - No");
@@ -102,8 +104,8 @@ namespace DrMangle
             CalculateFights(gd);
 
                 #endregion
-            
 
+            gd.SortByWins();
             gd.currentLevel.AddParts();
             
             }
@@ -135,7 +137,7 @@ namespace DrMangle
 
         #endregion
 
-        #region searchAndBuildFunctions
+        #region bodyFunctions
 
         private static void ShowRegions(GameData gd)
         {
@@ -183,16 +185,7 @@ namespace DrMangle
             //if in lab
             if (gd.currentRegion == 0)
             {
-                Console.WriteLine("Workshop Items:");
-                foreach (var part in gd.currentPlayer.workshop)
-                {
-                    int count = 1;
-                    if (part != null)
-                    {
-                        Console.WriteLine(count + ": " + part.partName);
-                    }
-                    
-                }
+                gd.currentPlayer.CheckWorkshop();
                 if (intInput == 2)
                 {
                     TalkPause("Which Item would you like to scrap?");
@@ -200,9 +193,9 @@ namespace DrMangle
                 }
                 else if (intInput == 1)
                 {
-                    if (gd.currentPlayer.monster == null)
+                    if (gd.currentPlayer.Monster == null)
                     {
-                        gd.currentPlayer.monster = BuildMonster(gd, true);
+                        gd.currentPlayer.Monster = BuildMonster(gd, true);
                     }
                     else
                     {
@@ -229,9 +222,9 @@ namespace DrMangle
                     }
                     else
                     {
-                        gd.currentPlayer.bag[bagSlot] = gd.currentLevel.locations[gd.currentRegion].PartsList.Last();
+                        gd.currentPlayer.Bag[bagSlot] = gd.currentLevel.locations[gd.currentRegion].PartsList.Last();
                         gd.currentLevel.locations[gd.currentRegion].PartsList.RemoveLast();
-                        Console.WriteLine("You found: " + gd.currentPlayer.bag[bagSlot].partName);
+                        Console.WriteLine("You found: " + gd.currentPlayer.Bag[bagSlot].partName);
                     }
                 }
             }
@@ -239,7 +232,7 @@ namespace DrMangle
             switch (intInput)
             {
                 case 3:
-                    CheckBag(gd);
+                    gd.currentPlayer.CheckBag();
                     ShowTurnOptions(gd, bagSlot);
                     break;
                 case 4:
@@ -260,7 +253,7 @@ namespace DrMangle
             bool halt = false;
             bool leave = false;
             int loopStart = 0;
-            MonsterData currentMonster = gd.currentPlayer.monster;
+            MonsterData currentMonster = gd.currentPlayer.Monster;
             //string newName;
 
             if (isNew)
@@ -316,7 +309,7 @@ namespace DrMangle
                     }
 
                     Console.WriteLine("0 - Exit");
-                    CheckBag(gd);
+                    gd.currentPlayer.CheckBag();
 
                     TalkPause("Please choose a " + type + ":");
                     intInput = CheckInput(0, 5);
@@ -327,7 +320,7 @@ namespace DrMangle
                         leave = true;
                         break;
                     }
-                    chosenPart = gd.currentPlayer.bag[intInput - 1];
+                    chosenPart = gd.currentPlayer.Bag[intInput - 1];
 
                     Console.WriteLine(chosenPart.partName);
                     if (chosenPart.partType != (i + 1))
@@ -352,7 +345,7 @@ namespace DrMangle
                         {
                             case 1:
                                 table[i] = chosenPart;
-                                gd.currentPlayer.bag[intInput - 1] = null;
+                                gd.currentPlayer.Bag[intInput - 1] = null;
                                 break;
                             case 2:
                                 break;
@@ -420,43 +413,21 @@ namespace DrMangle
 
         }
 
-        private static void CheckBag(GameData gd)
-        {
-            int counter = 1;
-            foreach (var part in gd.currentPlayer.bag)
-            {
-                if (part != null)
-                {
-                    Console.WriteLine(counter + " - " + part.partName);
-                    counter = counter + 1;
-                }
-            }
-        }
-
         private static void CalculateFights(GameData gd)
         {
             Queue<PlayerData> fighters = new Queue<PlayerData>();
 
             //find all available competitors
-/////////////////////////////////////////////////////////////////////////////////////
-//It'd be cool to put the ones with the best records first, as there's a slight benefit to going last
-
-            if (gd.currentPlayer.monster == null)
-            { }
-            else if (gd.currentPlayer.monster.CanFight())
+            foreach (var player in gd.allPlayers)
             {
-                fighters.Enqueue(gd.currentPlayer);
-            }
-            foreach (PlayerData ai in gd.aiPlayers)
-            {
-                if (ai.monster == null)
+                if (player.Monster == null)
                 { }
-                else if (ai.monster.CanFight())
+                else if (player.Monster.CanFight())
                 {
-                    fighters.Enqueue(ai);
+                    fighters.Enqueue(player);
                 }
-                
             }
+            
             //pair off
             if (fighters.Count == 0)
             {
@@ -504,12 +475,12 @@ namespace DrMangle
         {
             PlayerData winner;
             
-            MonsterData bm = blue.monster;
-            MonsterData gm = green.monster;
+            MonsterData bm = blue.Monster;
+            MonsterData gm = green.Monster;
 
-            Console.WriteLine("In the blue corner, " + blue.name + " presents " + blue.monster.name);
-            TalkPause(blue.monster.name + "boasts " + blue.monster.monsterStats);
-            Console.WriteLine("In the green corner, " + green.name + " presents " + green.monster.name);
+            Console.WriteLine("In the blue corner, " + blue.Name + " presents " + blue.Monster.name);
+            TalkPause(blue.Monster.name + "boasts " + blue.Monster.monsterStats);
+            Console.WriteLine("In the green corner, " + green.Name + " presents " + green.Monster.name);
 
             while (bm.parts[0].partDurability > 0 && bm.parts[1].partDurability > 0 && gm.parts[0].partDurability > 0 && gm.parts[1].partDurability > 0)
             {
@@ -584,19 +555,19 @@ namespace DrMangle
             if (bm.parts[0].partDurability > 0 && bm.parts[1].partDurability > 0)
             {
                 winner = blue;
-                blue.wins = blue.wins + 1;
-                blue.monster.wins = blue.monster.wins + 1;
+                blue.Wins = blue.Wins + 1;
+                blue.Monster.wins = blue.Monster.wins + 1;
             }
             else
             {
                 winner = green;
-                green.wins = green.wins + 1;
-                green.monster.wins = green.monster.wins + 1;
+                green.Wins = green.Wins + 1;
+                green.Monster.wins = green.Monster.wins + 1;
             }
-            blue.fights = blue.fights + 1;
-            blue.monster.fights = blue.monster.fights + 1;
-            green.fights = green.fights + 1;
-            green.monster.fights = green.monster.fights + 1;
+            blue.Fights = blue.Fights + 1;
+            blue.Monster.fights = blue.Monster.fights + 1;
+            green.Fights = green.Fights + 1;
+            green.Monster.fights = green.Monster.fights + 1;
 
             return winner;
         }

@@ -86,7 +86,12 @@ namespace DrMangle
         }
 
         //monster
-        //fight record
+            //display monster
+            //add part to monster
+            //remove part from monster
+            //activate monster
+            //scrap monster
+            //repair mosnter
 
         //buffs
     }

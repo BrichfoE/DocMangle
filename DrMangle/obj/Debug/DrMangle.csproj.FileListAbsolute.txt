@@ -5,3 +5,10 @@ C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.csprojResolve
 C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.csproj.CoreCompileInputs.cache
 C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.exe
 C:\Users\Elliott\source\repos\DrMangle\DrMangle\obj\Debug\DrMangle.pdb
+C:\git\DocMangle\DrMangle\bin\Debug\DrMangle.exe.config
+C:\git\DocMangle\DrMangle\bin\Debug\DrMangle.exe
+C:\git\DocMangle\DrMangle\bin\Debug\DrMangle.pdb
+C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.csproj.CoreCompileInputs.cache
+C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.exe
+C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.pdb
+C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.csprojResolveAssemblyReference.cache
