@@ -39,7 +39,7 @@ namespace DrMangle
             {
                 if (bodyParts[i] != null)
                 {
-                    newStat = newStat + (bodyParts[i].stats[stat] * bodyParts[i].partDurability);
+                    newStat = newStat + (bodyParts[i].Stats[stat] * bodyParts[i].PartDurability);
                 }
             }
 
@@ -55,9 +55,9 @@ namespace DrMangle
 
             foreach (var part in parts)
             {
-                if (part != null && part.partDurability > 0)
+                if (part != null && part.PartDurability > 0)
                 {
-                    switch (part.partType)
+                    switch (part.PartType)
                     {
                         case 0:
                             head = true;

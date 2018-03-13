@@ -47,7 +47,7 @@ namespace DrMangle
             int high = 2;
             int amount = 1;
 
-            switch (part.partRarity)
+            switch (part.PartRarity)
             {
                 case 0:
                     high = 1000;
@@ -73,7 +73,7 @@ namespace DrMangle
 
             amount = r.Next(high);
 
-            switch (part.partStructure)
+            switch (part.PartStructure)
             {
                 case 0:
                     Ether = Ether + amount;
@@ -95,7 +95,7 @@ namespace DrMangle
             }           
 
             storage[reference] = null;
-            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.partStructure] + " parts.");
+            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.PartStructure] + " parts.");
         }
 
         public void ScrapItem(List<PartData> storage, int reference)
@@ -105,7 +105,7 @@ namespace DrMangle
             int high = 2;
             int amount = 1;
 
-            switch (part.partRarity)
+            switch (part.PartRarity)
             {
                 case 0:
                     high = 1000;
@@ -131,7 +131,7 @@ namespace DrMangle
 
             amount = r.Next(high);
 
-            switch (part.partStructure)
+            switch (part.PartStructure)
             {
                 case 0:
                     Ether = Ether + amount;
@@ -153,7 +153,7 @@ namespace DrMangle
             }
 
             storage[reference] = null;
-            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.partStructure] + " parts.");
+            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.PartStructure] + " parts.");
             
             storage.Sort(_comparer);
         }
