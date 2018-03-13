@@ -127,29 +127,29 @@ namespace MangleTest
         {
             //setup
             GameData gd = new GameData("test", 5);
-            gd.allPlayers = new PlayerData[6];
+            gd.AllPlayers = new PlayerData[6];
             for (int i = 0; i < 6; i++)
             {
-                gd.allPlayers[i] = new AIPlayerData(1);
+                gd.AllPlayers[i] = new AIPlayerData(1);
             }
 
-            gd.allPlayers[0].Wins = 2;  
-            gd.allPlayers[1].Wins = 5;  
-            gd.allPlayers[2].Wins = 3;  
-            gd.allPlayers[3].Wins = 1;  
-            gd.allPlayers[4].Wins = 7;  
-            gd.allPlayers[5].Wins = 4;  
+            gd.AllPlayers[0].Wins = 2;  
+            gd.AllPlayers[1].Wins = 5;  
+            gd.AllPlayers[2].Wins = 3;  
+            gd.AllPlayers[3].Wins = 1;  
+            gd.AllPlayers[4].Wins = 7;  
+            gd.AllPlayers[5].Wins = 4;  
 
             //test
             gd.SortByWins();
 
             //validate
-            Assert.AreEqual(gd.allPlayers[0].Wins, 7);
-            Assert.AreEqual(gd.allPlayers[1].Wins, 5);
-            Assert.AreEqual(gd.allPlayers[2].Wins, 4);
-            Assert.AreEqual(gd.allPlayers[3].Wins, 3);
-            Assert.AreEqual(gd.allPlayers[4].Wins, 2);
-            Assert.AreEqual(gd.allPlayers[5].Wins, 1);
+            Assert.AreEqual(gd.AllPlayers[0].Wins, 7);
+            Assert.AreEqual(gd.AllPlayers[1].Wins, 5);
+            Assert.AreEqual(gd.AllPlayers[2].Wins, 4);
+            Assert.AreEqual(gd.AllPlayers[3].Wins, 3);
+            Assert.AreEqual(gd.AllPlayers[4].Wins, 2);
+            Assert.AreEqual(gd.AllPlayers[5].Wins, 1);
 
         }
 

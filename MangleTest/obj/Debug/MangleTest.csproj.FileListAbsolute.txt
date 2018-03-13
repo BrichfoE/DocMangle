@@ -30,3 +30,5 @@ C:\git\DocMangle\MangleTest\obj\Debug\MangleTest.csprojResolveAssemblyReference.
 C:\git\DocMangle\MangleTest\obj\Debug\MangleTest.csproj.CoreCompileInputs.cache
 C:\git\DocMangle\MangleTest\obj\Debug\MangleTest.dll
 C:\git\DocMangle\MangleTest\obj\Debug\MangleTest.pdb
+C:\git\DocMangle\MangleTest\bin\Debug\Newtonsoft.Json.dll
+C:\git\DocMangle\MangleTest\bin\Debug\Newtonsoft.Json.xml

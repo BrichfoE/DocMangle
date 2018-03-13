@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DrMangle
 {
@@ -10,88 +7,86 @@ namespace DrMangle
     {
         public string partName;
 
-        public int partType;
-        public int partStructure;
-        public int partRarity;
+        public int PartType { get; set; }
+        public int PartStructure { get; set; }
+        public int PartRarity { get; set; }
 
-        public float[] stats;
-       
-        public float partDurability;
+        public float[] Stats { get; set; }
 
-        public PartData()
+        public float PartDurability { get; set; }
+
+        public PartData() //completely random part
         {
-            stats = new float[4];
+            Stats = new float[4];
             GeneratePart();
             GenerateStats();
             GenerateName();
         }
 
-        public PartData(int type, int structure, int rarity)
+        public PartData(int type, int structure, int rarity) //random stats and durability
         {
-        stats = new float[4];
+        Stats = new float[4];
 
-        partType = type;
-        partStructure = structure;
-        partRarity = rarity;
+        PartType = type;
+        PartStructure = structure;
+        PartRarity = rarity;
              
         GenerateStats();
         GenerateName();
 
         }
 
-        public PartData(int type, int structure, int rarity, float alacrity, float strength, float endurance, float special, float durability)
+        public PartData(int type, int structure, int rarity, float alacrity, float strength, float endurance, float special, float durability) //defined part
         { 
 
-        partType = type;
-        partStructure = structure;
-        partRarity = rarity;
+        PartType = type;
+        PartStructure = structure;
+        PartRarity = rarity;
 
-        stats[0] = alacrity;
-        stats[1] = strength;
-        stats[2] = endurance;
-        stats[3] = special;
+        Stats[0] = alacrity;
+        Stats[1] = strength;
+        Stats[2] = endurance;
+        Stats[3] = special;
 
-        partDurability = durability;
+        PartDurability = durability;
 
         GenerateName();
            
         }
-
 
         private void GeneratePart()
         {
             Random r = new Random();
             float rarityRoll;
 
-            partType = r.Next(5);
-            partStructure = r.Next(4) + 1;
+            PartType = r.Next(5);
+            PartStructure = r.Next(4) + 1;
             rarityRoll = r.Next(1000) + 1;
 
             if (rarityRoll < 500)
             {
-                partRarity = 5;
+                PartRarity = 5;
             }
             else if (rarityRoll < 750)
             {
-                partRarity = 4;
+                PartRarity = 4;
             }
             else if (rarityRoll < 900)
             {
-                partRarity = 3;
+                PartRarity = 3;
             }
             else if (rarityRoll < 980)
             {
-                partRarity = 2;
+                PartRarity = 2;
             }
             else if (rarityRoll < 999)
             {
-                partRarity = 1;
+                PartRarity = 1;
             }
             else
             {
-                partRarity = 0;
+                PartRarity = 0;
             }
-
         }
 
         private void GenerateStats()
@@ -101,52 +96,52 @@ namespace DrMangle
             float aRoll = r.Next(20) + 1;
             float sRoll = r.Next(20) + 1;
             float eRoll = r.Next(20) + 1;
-            float mRoll = r.Next(20) + 1;
+            float tRoll = r.Next(20) + 1;
 
             //multipliers for specials
             float aSpecial = 1;
             float sSpecial = 1;
             float eSpecial = 1;
-            float mSpecial = 1;
+            float tSpecial = 1;
 
             int rarityMult;
 
-            switch (partType)
+            switch (PartType)
             {
                 case 1:
                     aSpecial = aSpecial + .2f;
                     sSpecial = sSpecial + .2f;
                     eSpecial = eSpecial + .2f;
-                    mSpecial = mSpecial + .5f;
+                    tSpecial = tSpecial + .5f;
                     break;
                 case 2:
                     aSpecial = aSpecial + .1f;
                     sSpecial = sSpecial + .1f;
                     eSpecial = eSpecial + .8f;
-                    mSpecial = mSpecial + .1f;
+                    tSpecial = tSpecial + .1f;
                     break;
                 case 3:
                 case 4:
                     aSpecial = aSpecial + .2f;
                     sSpecial = sSpecial + .5f;
                     eSpecial = eSpecial + .1f;
-                    mSpecial = mSpecial + .1f;
+                    tSpecial = tSpecial + .1f;
                     break;
                 case 5:
                 case 6:
                     aSpecial = aSpecial + .5f;
                     sSpecial = sSpecial + .1f;
                     eSpecial = eSpecial + .1f;
-                    mSpecial = mSpecial + .1f;
+                    tSpecial = tSpecial + .1f;
                     break;
                 default:
                     break;
             }
 
-            switch (partStructure)
+            switch (PartStructure)
             {
                 case 2:
-                    mSpecial = mSpecial + 1;
+                    tSpecial = tSpecial + 1;
                     break;
                 case 4:
                     eSpecial = eSpecial + 1;
@@ -163,54 +158,54 @@ namespace DrMangle
 
             int durabilityRoll = r.Next(1, 100);
 
-            switch (partRarity)
+            switch (PartRarity)
             {
                 case 6:
                     rarityMult = 500;
-                    partDurability = 100;
+                    PartDurability = 100;
                     break;
                 case 5:
                     rarityMult = 200;
-                    partDurability = ((float)(durabilityRoll/3) + 66) / 100;
+                    PartDurability = ((float)(durabilityRoll/3) + 66) / 100;
                     break;
                 case 4:
                     rarityMult = 100;
-                    partDurability = ((float)(durabilityRoll * .5f) + 50) / 100;
+                    PartDurability = ((float)(durabilityRoll * .5f) + 50) / 100;
                     break;
                 case 3:
                     rarityMult = 30;
-                    partDurability = ((float)((durabilityRoll *.75f) + 25) / 100);
+                    PartDurability = ((float)((durabilityRoll *.75f) + 25) / 100);
                     break;
                 case 2:
                     rarityMult = 15;
-                    partDurability = ((float)((durabilityRoll *.9f) + 10) / 100);
+                    PartDurability = ((float)((durabilityRoll *.9f) + 10) / 100);
                     break;
                 default:
                     rarityMult = 5;
-                    partDurability = ((float)(durabilityRoll)) / 100;
+                    PartDurability = ((float)(durabilityRoll)) / 100;
                     break;
             }
 
 
-            stats[0] = rarityMult * aRoll * aSpecial;
-            stats[1] = rarityMult * sRoll * sSpecial;
-            stats[2] = rarityMult * eRoll * eSpecial;
-            stats[3] = rarityMult * mRoll * mSpecial;
+            Stats[0] = rarityMult * aRoll * aSpecial;
+            Stats[1] = rarityMult * sRoll * sSpecial;
+            Stats[2] = rarityMult * eRoll * eSpecial;
+            Stats[3] = rarityMult * tRoll * tSpecial;
 
             for (int i = 0; i < 4; i++)
             {
-                if (stats[i] > 16666.5f)
+                if (Stats[i] > 16666.5f)
                 {
-                    stats[i] = 16666.5f;
+                    Stats[i] = 16666.5f;
                 }
             }
         }
 
         private void GenerateName()
         {
-            string type = Anatomy.typeList[partType];
-            string structure = Anatomy.structureList[partStructure];
-            string rarity = Anatomy.rarityList[partRarity];
+            string type = Anatomy.typeList[PartType];
+            string structure = Anatomy.structureList[PartStructure];
+            string rarity = Anatomy.rarityList[PartRarity];
 
             partName = rarity + " " + structure + " " + type;
         }
@@ -232,13 +227,13 @@ namespace DrMangle
             {
                 return 0;
             }
-            else if (x.partStructure.CompareTo(y.partStructure) != 0)
+            else if (x.PartStructure.CompareTo(y.PartStructure) != 0)
             {
-                return x.partStructure.CompareTo(y.partStructure);
+                return x.PartStructure.CompareTo(y.PartStructure);
             }
-            else if (x.partRarity.CompareTo(y.partRarity) != 0)
+            else if (x.PartRarity.CompareTo(y.PartRarity) != 0)
             {
-                return x.partRarity.CompareTo(y.partRarity);
+                return x.PartRarity.CompareTo(y.PartRarity);
             }
             else
             {
@@ -246,6 +241,7 @@ namespace DrMangle
             }
         }
 
+///////////////////////////equality implementation if I ever need to do non-reference equality
         //public override bool Equals(object obj)
         //{
         //    return base.Equals(obj);
@@ -292,7 +288,6 @@ namespace DrMangle
                , "Rare"
                , "Common"
             };
-
         public static string[] statList = new string[4]
             {
                   "Alacrity"

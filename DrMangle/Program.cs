@@ -72,7 +72,7 @@ namespace DrMangle
 
             #region build
             TalkPause("It is now 6 o'clock. Return to your lab and prepare for the floorshow at 7.");
-            gd.currentRegion = 0;
+            gd.CurrentRegion = 0;
             gd.SetRegionText();
             ShowTurnOptions(gd, 6);
 
@@ -80,7 +80,7 @@ namespace DrMangle
 
             #region fight
             TalkPause("Welcome to the evening's entertainment!");
-            if (gd.currentPlayer.Monster != null && gd.currentPlayer.Monster.CanFight())
+            if (gd.CurrentPlayer.Monster != null && gd.CurrentPlayer.Monster.CanFight())
             {
                 Console.WriteLine("Would you like to particpate tonight?");
                 TalkPause("1 - Yes, 2 - No");
@@ -106,7 +106,7 @@ namespace DrMangle
                 #endregion
 
             gd.SortByWins();
-            gd.currentLevel.AddParts();
+            gd.CurrentLevel.AddParts();
             
             }
 
@@ -142,31 +142,31 @@ namespace DrMangle
         private static void ShowRegions(GameData gd)
         {
             int intInput;
-            Console.WriteLine("You are currently in the "+gd.regionText + ",");
+            Console.WriteLine("You are currently in the "+gd.RegionText + ",");
 
             Console.WriteLine("what will you do next?");
             for (int i = 0; i < 5; i++)
             {
-                if (gd.currentRegion == i)
+                if (gd.CurrentRegion == i)
                 {
-                    Console.WriteLine(i + " - Stay in the " + gd.currentLevel.locations[i].ParkName);
+                    Console.WriteLine(i + " - Stay in the " + gd.CurrentLevel.locations[i].ParkName);
                 }
                 else
                 {
-                    Console.WriteLine(i + " - Go to the " + gd.currentLevel.locations[i].ParkName);
+                    Console.WriteLine(i + " - Go to the " + gd.CurrentLevel.locations[i].ParkName);
                 }
             }
 
             intInput = CheckInput(0, 4);
-            gd.currentRegion = intInput;
+            gd.CurrentRegion = intInput;
             gd.SetRegionText();
         }
 
         private static void ShowTurnOptions(GameData gd, int bagSlot)
         {
             int intInput;
-            Console.WriteLine("Welcome to the " + gd.regionText + "! Here you can: ");
-            if (gd.currentRegion == 0)
+            Console.WriteLine("Welcome to the " + gd.RegionText + "! Here you can: ");
+            if (gd.CurrentRegion == 0)
             {
                 Console.WriteLine("1 - Work on the monster");
                 Console.WriteLine("2 - Scrap unwanted parts");
@@ -183,9 +183,9 @@ namespace DrMangle
 
             intInput = CheckInput(1, 4);
             //if in lab
-            if (gd.currentRegion == 0)
+            if (gd.CurrentRegion == 0)
             {
-                gd.currentPlayer.CheckWorkshop();
+                gd.CurrentPlayer.CheckWorkshop();
                 if (intInput == 2)
                 {
                     TalkPause("Which Item would you like to scrap?");
@@ -193,9 +193,9 @@ namespace DrMangle
                 }
                 else if (intInput == 1)
                 {
-                    if (gd.currentPlayer.Monster == null)
+                    if (gd.CurrentPlayer.Monster == null)
                     {
-                        gd.currentPlayer.Monster = BuildMonster(gd, true);
+                        gd.CurrentPlayer.Monster = BuildMonster(gd, true);
                     }
                     else
                     {
@@ -208,7 +208,7 @@ namespace DrMangle
             {
                 if (intInput == 2)
                 {
-                    foreach (var park in gd.currentLevel.locations)
+                    foreach (var park in gd.CurrentLevel.locations)
                     {
                         Console.WriteLine("There are " + park.PartsList.Count + " parts left in the " + park.ParkName + ".");
                     }
@@ -216,15 +216,15 @@ namespace DrMangle
 
                 else if (intInput == 1)
                 {
-                    if (gd.currentLevel.locations[gd.currentRegion].PartsList.Count == 0)
+                    if (gd.CurrentLevel.locations[gd.CurrentRegion].PartsList.Count == 0)
                     {
                         Console.WriteLine("There are no more parts in this region");
                     }
                     else
                     {
-                        gd.currentPlayer.Bag[bagSlot] = gd.currentLevel.locations[gd.currentRegion].PartsList.Last();
-                        gd.currentLevel.locations[gd.currentRegion].PartsList.RemoveLast();
-                        Console.WriteLine("You found: " + gd.currentPlayer.Bag[bagSlot].partName);
+                        gd.CurrentPlayer.Bag[bagSlot] = gd.CurrentLevel.locations[gd.CurrentRegion].PartsList.Last();
+                        gd.CurrentLevel.locations[gd.CurrentRegion].PartsList.RemoveLast();
+                        Console.WriteLine("You found: " + gd.CurrentPlayer.Bag[bagSlot].partName);
                     }
                 }
             }
@@ -232,7 +232,7 @@ namespace DrMangle
             switch (intInput)
             {
                 case 3:
-                    gd.currentPlayer.CheckBag();
+                    gd.CurrentPlayer.CheckBag();
                     ShowTurnOptions(gd, bagSlot);
                     break;
                 case 4:
@@ -253,7 +253,7 @@ namespace DrMangle
             bool halt = false;
             bool leave = false;
             int loopStart = 0;
-            MonsterData currentMonster = gd.currentPlayer.Monster;
+            MonsterData currentMonster = gd.CurrentPlayer.Monster;
             //string newName;
 
             if (isNew)
@@ -301,15 +301,15 @@ namespace DrMangle
                         table[i] = currentMonster.parts[i];
                         TalkPause("Currently " + currentMonster + " has the below " + type);
                         Console.WriteLine(currentMonster.parts[i].partName);
-                        Console.WriteLine("Durability: " + currentMonster.parts[i].partDurability);
-                        Console.WriteLine("Alacrity" + currentMonster.parts[i].stats[0]);
-                        Console.WriteLine("Strenght" + currentMonster.parts[i].stats[1]);
-                        Console.WriteLine("Endurance" + currentMonster.parts[i].stats[2]);
-                        TalkPause("Technique" + currentMonster.parts[i].stats[3]);
+                        Console.WriteLine("Durability: " + currentMonster.parts[i].PartDurability);
+                        Console.WriteLine("Alacrity" + currentMonster.parts[i].Stats[0]);
+                        Console.WriteLine("Strenght" + currentMonster.parts[i].Stats[1]);
+                        Console.WriteLine("Endurance" + currentMonster.parts[i].Stats[2]);
+                        TalkPause("Technique" + currentMonster.parts[i].Stats[3]);
                     }
 
                     Console.WriteLine("0 - Exit");
-                    gd.currentPlayer.CheckBag();
+                    gd.CurrentPlayer.CheckBag();
 
                     TalkPause("Please choose a " + type + ":");
                     intInput = CheckInput(0, 5);
@@ -320,20 +320,20 @@ namespace DrMangle
                         leave = true;
                         break;
                     }
-                    chosenPart = gd.currentPlayer.Bag[intInput - 1];
+                    chosenPart = gd.CurrentPlayer.Bag[intInput - 1];
 
                     Console.WriteLine(chosenPart.partName);
-                    if (chosenPart.partType != (i + 1))
+                    if (chosenPart.PartType != (i + 1))
                     {
                         Console.WriteLine("That is not a " + type+ "!");
                     }
                     else
                     {
-                        Console.WriteLine("Durability: " + chosenPart.partDurability);
-                        Console.WriteLine("Alacrity" + currentMonster.parts[i].stats[0]);
-                        Console.WriteLine("Strenght" + currentMonster.parts[i].stats[1]);
-                        Console.WriteLine("Endurance" + currentMonster.parts[i].stats[2]);
-                        TalkPause("Technique" + currentMonster.parts[i].stats[3]);
+                        Console.WriteLine("Durability: " + chosenPart.PartDurability);
+                        Console.WriteLine("Alacrity" + currentMonster.parts[i].Stats[0]);
+                        Console.WriteLine("Strenght" + currentMonster.parts[i].Stats[1]);
+                        Console.WriteLine("Endurance" + currentMonster.parts[i].Stats[2]);
+                        TalkPause("Technique" + currentMonster.parts[i].Stats[3]);
                         Console.WriteLine("Use this part?");
                         Console.WriteLine("1 - Yes");
                         Console.WriteLine("2 - No");
@@ -345,7 +345,7 @@ namespace DrMangle
                         {
                             case 1:
                                 table[i] = chosenPart;
-                                gd.currentPlayer.Bag[intInput - 1] = null;
+                                gd.CurrentPlayer.Bag[intInput - 1] = null;
                                 break;
                             case 2:
                                 break;
@@ -418,7 +418,7 @@ namespace DrMangle
             Queue<PlayerData> fighters = new Queue<PlayerData>();
 
             //find all available competitors
-            foreach (var player in gd.allPlayers)
+            foreach (var player in gd.AllPlayers)
             {
                 if (player.Monster == null)
                 { }
@@ -482,7 +482,7 @@ namespace DrMangle
             TalkPause(blue.Monster.name + "boasts " + blue.Monster.monsterStats);
             Console.WriteLine("In the green corner, " + green.Name + " presents " + green.Monster.name);
 
-            while (bm.parts[0].partDurability > 0 && bm.parts[1].partDurability > 0 && gm.parts[0].partDurability > 0 && gm.parts[1].partDurability > 0)
+            while (bm.parts[0].PartDurability > 0 && bm.parts[1].PartDurability > 0 && gm.parts[0].PartDurability > 0 && gm.parts[1].PartDurability > 0)
             {
                 MonsterData attack;
                 MonsterData reply;
@@ -524,22 +524,22 @@ namespace DrMangle
                 }
 
                 //strike vs parry, result decreases random part damage
-                float strikeDamage = attackTarget.partDurability - (strike - parry);
+                float strikeDamage = attackTarget.PartDurability - (strike - parry);
                 Console.WriteLine(attack.name + " swings at " + reply.name + "'s " + attackTarget.partName + "!");
-                TalkPause(attackTarget + " goes from " + attackTarget.partDurability + " to " + (attackTarget.partDurability - strikeDamage));
-                attackTarget.partDurability  = attackTarget.partDurability - strikeDamage;
-                if (attackTarget.partDurability <= 0)
+                TalkPause(attackTarget + " goes from " + attackTarget.PartDurability + " to " + (attackTarget.PartDurability - strikeDamage));
+                attackTarget.PartDurability  = attackTarget.PartDurability - strikeDamage;
+                if (attackTarget.PartDurability <= 0)
                 {
                     TalkPause(attackTarget.partName + " has been destroyed!");
                     attackTarget = null;
                 }
 
                 //repost vs block, result decreases random part damage
-                float repostDamage = replyTarget.partDurability - (repost - block);
+                float repostDamage = replyTarget.PartDurability - (repost - block);
                 Console.WriteLine(reply.name + " counters at " + attack.name + "'s " + replyTarget.partName + "!");
-                TalkPause(attackTarget + " goes from " + replyTarget.partDurability + " to " + (replyTarget.partDurability - repostDamage));
-                replyTarget.partDurability = replyTarget.partDurability - repostDamage;
-                if (replyTarget.partDurability <= 0)
+                TalkPause(attackTarget + " goes from " + replyTarget.PartDurability + " to " + (replyTarget.PartDurability - repostDamage));
+                replyTarget.PartDurability = replyTarget.PartDurability - repostDamage;
+                if (replyTarget.PartDurability <= 0)
                 {
                     TalkPause(replyTarget.partName + " has been destroyed!");
                     attackTarget = null;
@@ -552,7 +552,7 @@ namespace DrMangle
                 }
             }
 
-            if (bm.parts[0].partDurability > 0 && bm.parts[1].partDurability > 0)
+            if (bm.parts[0].PartDurability > 0 && bm.parts[1].PartDurability > 0)
             {
                 winner = blue;
                 blue.Wins = blue.Wins + 1;
@@ -581,7 +581,7 @@ namespace DrMangle
                 {
                     for (int i = start; i < end + 1; i++)
                     {
-                        if (RNG(i, end, false) == i  && targetMonster.parts[i].partDurability > 0)
+                        if (RNG(i, end, false) == i  && targetMonster.parts[i].PartDurability > 0)
                         {
                             target = targetMonster.parts[i];
                         }
@@ -591,7 +591,7 @@ namespace DrMangle
                 {
                     for (int i = start; i > end - 1; i--)
                     {
-                        if (RNG(end, i, false) == end && targetMonster.parts[i].partDurability > 0)
+                        if (RNG(end, i, false) == end && targetMonster.parts[i].PartDurability > 0)
                         {
                             target = targetMonster.parts[i];
                         }

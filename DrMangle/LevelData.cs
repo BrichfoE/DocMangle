@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DrMangle
 {
     public class LevelData
     {
-        public Park[] locations;
+        public Park[] locations { get; set; }
 
         public LevelData()
         {
@@ -71,7 +68,7 @@ namespace DrMangle
                 for (int j = 0; j < roll; j++)
                 {
                     PartData newPart = new PartData();
-                    newPart.partStructure = locations[i].ParkPart;
+                    newPart.PartStructure = locations[i].ParkPart;
                     locations[i].PartsList.AddLast(newPart);
                 }
             }

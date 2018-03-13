@@ -8,35 +8,35 @@ namespace DrMangle
 {
      public class GameData
     {
-        string gameName;
-        int gameDataId;
-        public LevelData currentLevel;
-        public PlayerData currentPlayer;
-        public PlayerData[] aiPlayers;
-        public int currentRegion;
-        public string regionText;
-        public int aiPlayerCount;
+        string GameName { get; set; }
+        int GameDataId { get; set; }
+        public LevelData CurrentLevel { get; set; }
+        public PlayerData CurrentPlayer { get; set; }
+        public PlayerData[] AiPlayers { get; set; }
+        public int CurrentRegion { get; set; }
+        public string RegionText { get; set; }
+        public int AiPlayerCount { get; set; }
 
-        public PlayerData[] allPlayers;
+        public PlayerData[] AllPlayers { get; set; }
 
         public GameData(string name, int aiCount)
         {
             //somehow read file to find next available game ID
 
-            gameName = name;
-            currentLevel = new LevelData();
-            currentPlayer = new HumanPlayerData("New Contestant");
+            GameName = name;
+            CurrentLevel = new LevelData();
+            CurrentPlayer = new HumanPlayerData("New Contestant");
             
-            currentRegion = 0; //at the lab
+            CurrentRegion = 0; //at the lab
             SetRegionText();
 
-            aiPlayers = new PlayerData[aiPlayerCount];
-            GenerateAI(aiPlayers);
+            AiPlayers = new PlayerData[AiPlayerCount];
+            GenerateAI(AiPlayers);
             var allPlayers = new PlayerData[aiCount + 1];
-            allPlayers[0] = currentPlayer;
-            for (int i = 0; i < aiPlayers.Length; i++)
+            allPlayers[0] = CurrentPlayer;
+            for (int i = 0; i < AiPlayers.Length; i++)
             {
-                allPlayers[i + 1] = aiPlayers[i];
+                allPlayers[i + 1] = AiPlayers[i];
             }
         }
 
@@ -63,7 +63,7 @@ namespace DrMangle
 
         public void SetRegionText()
         {
-            regionText = currentLevel.locations[currentRegion].ParkName;
+            RegionText = CurrentLevel.locations[CurrentRegion].ParkName;
         }
 
         private void GenerateAI(PlayerData[] ai)
@@ -76,25 +76,25 @@ namespace DrMangle
 
         public void SortByWins()
         {
-            for (int i = 0; i < allPlayers.Length; i++)
+            for (int i = 0; i < AllPlayers.Length; i++)
             {
-                PlayerData left = allPlayers[i];
-                PlayerData high = allPlayers[i];
+                PlayerData left = AllPlayers[i];
+                PlayerData high = AllPlayers[i];
                 int highIndex = i;
 
-                for (int j = i + 1; j < allPlayers.Length; j++)
+                for (int j = i + 1; j < AllPlayers.Length; j++)
                 {
-                    if (high.Compare(high, allPlayers[j]) < 0)
+                    if (high.Compare(high, AllPlayers[j]) < 0)
                     {
-                        high = allPlayers[j];
+                        high = AllPlayers[j];
                         highIndex = j;                        
                     }
                 }
 
                 if (left != high)
                 {
-                    allPlayers[highIndex] = left;
-                    allPlayers[i] = high;
+                    AllPlayers[highIndex] = left;
+                    AllPlayers[i] = high;
                 }
             }
         }
