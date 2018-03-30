@@ -6,18 +6,27 @@ using System.Threading.Tasks;
 
 namespace DrMangle
 {
-    public class MonsterData
+    public abstract class MonsterBase
+    {
+        public int Wins { get; set; }
+        public int Fights { get; set; }
+        public string Name { get; set; }
+    }
+
+    public class MonsterGhost : MonsterBase
+
+    {
+        public int DeathDay { get; set; }
+    }
+
+    public class MonsterData : MonsterBase
     {
         public PartData[] parts;
-        public string name;
-        public int wins;
-        public int fights;
-
         public float[] monsterStats;
         
         public MonsterData(string newName, PartData[] newParts)
         {
-            name = newName;
+            Name = newName;
             parts = newParts;
 
             monsterStats = new float[4];
@@ -28,8 +37,6 @@ namespace DrMangle
             }
 
         }
-
-
 
         public float CalculateStats(int stat, PartData[] bodyParts)
         {

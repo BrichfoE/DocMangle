@@ -6,28 +6,33 @@ using System.Threading.Tasks;
 
 namespace DrMangle
 {
-    class Program
+    public class Program
     {
-        
 
-        static void Main(string[] args)
-        {
-            #region initialization
+         public static void Main(string[] args)
+         {
+         #region initialization
             string textInput;
             int intInput;
+            GameData gd = null;
+            
+            GameRepo.FileSetup();
+            TalkPause("Welcome to the Isle of Dr. Mangle.");
+            if (GameRepo.gameIndex != null)
+            {
+                gd = GameRepo.LoadGame();
+            }
+            if (gd == null)
+            {
+                Console.WriteLine("Please enter a name for your game data:");
+                textInput = Console.ReadLine();
+                Console.WriteLine("And how many contestants will you be competing against?");
+                intInput = CheckInput(1, 7);
+                gd = new GameData(textInput, intInput);
+                GameRepo.SaveGame(gd);
+            }
+
             bool activeGame = true;
-            //bool halt;
-
-
-            //Need to work in save data here in a bit
-            Console.WriteLine("Welcome to the Isle of Dr. Mangle.");
-            Console.WriteLine("Please enter a name for your game data:");
-            textInput = Console.ReadLine();
-            Console.WriteLine("And how many contestants will you be competing against?");
-            intInput = CheckInput(1, 7);
-            GameData gd = new GameData(textInput, 3);
-
-
             #endregion
 
             #region introCutscene
@@ -73,7 +78,6 @@ namespace DrMangle
             #region build
             TalkPause("It is now 6 o'clock. Return to your lab and prepare for the floorshow at 7.");
             gd.CurrentRegion = 0;
-            gd.SetRegionText();
             ShowTurnOptions(gd, 6);
 
             #endregion
@@ -159,7 +163,6 @@ namespace DrMangle
 
             intInput = CheckInput(0, 4);
             gd.CurrentRegion = intInput;
-            gd.SetRegionText();
         }
 
         private static void ShowTurnOptions(GameData gd, int bagSlot)
@@ -264,7 +267,7 @@ namespace DrMangle
             else
             {
                 loopStart = 2;
-                Console.WriteLine(currentMonster.name + " slides onto the table...");
+                Console.WriteLine(currentMonster.Name + " slides onto the table...");
             }
 
             for (int i = loopStart; i < 6; i++)
@@ -396,7 +399,7 @@ namespace DrMangle
                 {
                     TalkPause("What is its name?");
                     currentMonster = newMonster;
-                    currentMonster.name = Console.ReadLine();
+                    currentMonster.Name = Console.ReadLine();
                     
                 }
                 else
@@ -478,9 +481,9 @@ namespace DrMangle
             MonsterData bm = blue.Monster;
             MonsterData gm = green.Monster;
 
-            Console.WriteLine("In the blue corner, " + blue.Name + " presents " + blue.Monster.name);
-            TalkPause(blue.Monster.name + "boasts " + blue.Monster.monsterStats);
-            Console.WriteLine("In the green corner, " + green.Name + " presents " + green.Monster.name);
+            Console.WriteLine("In the blue corner, " + blue.Name + " presents " + blue.Monster.Name);
+            TalkPause(blue.Monster.Name + "boasts " + blue.Monster.monsterStats);
+            Console.WriteLine("In the green corner, " + green.Name + " presents " + green.Monster.Name);
 
             while (bm.parts[0].PartDurability > 0 && bm.parts[1].PartDurability > 0 && gm.parts[0].PartDurability > 0 && gm.parts[1].PartDurability > 0)
             {
@@ -525,7 +528,7 @@ namespace DrMangle
 
                 //strike vs parry, result decreases random part damage
                 float strikeDamage = attackTarget.PartDurability - (strike - parry);
-                Console.WriteLine(attack.name + " swings at " + reply.name + "'s " + attackTarget.partName + "!");
+                Console.WriteLine(attack.Name + " swings at " + reply.Name + "'s " + attackTarget.partName + "!");
                 TalkPause(attackTarget + " goes from " + attackTarget.PartDurability + " to " + (attackTarget.PartDurability - strikeDamage));
                 attackTarget.PartDurability  = attackTarget.PartDurability - strikeDamage;
                 if (attackTarget.PartDurability <= 0)
@@ -536,7 +539,7 @@ namespace DrMangle
 
                 //repost vs block, result decreases random part damage
                 float repostDamage = replyTarget.PartDurability - (repost - block);
-                Console.WriteLine(reply.name + " counters at " + attack.name + "'s " + replyTarget.partName + "!");
+                Console.WriteLine(reply.Name + " counters at " + attack.Name + "'s " + replyTarget.partName + "!");
                 TalkPause(attackTarget + " goes from " + replyTarget.PartDurability + " to " + (replyTarget.PartDurability - repostDamage));
                 replyTarget.PartDurability = replyTarget.PartDurability - repostDamage;
                 if (replyTarget.PartDurability <= 0)
@@ -556,18 +559,18 @@ namespace DrMangle
             {
                 winner = blue;
                 blue.Wins = blue.Wins + 1;
-                blue.Monster.wins = blue.Monster.wins + 1;
+                blue.Monster.Wins = blue.Monster.Wins + 1;
             }
             else
             {
                 winner = green;
                 green.Wins = green.Wins + 1;
-                green.Monster.wins = green.Monster.wins + 1;
+                green.Monster.Wins = green.Monster.Wins + 1;
             }
             blue.Fights = blue.Fights + 1;
-            blue.Monster.fights = blue.Monster.fights + 1;
+            blue.Monster.Fights = blue.Monster.Fights + 1;
             green.Fights = green.Fights + 1;
-            green.Monster.fights = green.Monster.fights + 1;
+            green.Monster.Fights = green.Monster.Fights + 1;
 
             return winner;
         }

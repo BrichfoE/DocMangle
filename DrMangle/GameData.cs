@@ -3,34 +3,40 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace DrMangle
 {
      public class GameData
     {
-        string GameName { get; set; }
-        int GameDataId { get; set; }
+        public string GameName { get; set; }
+        public int GameDataId { get; set; }
         public LevelData CurrentLevel { get; set; }
-        public PlayerData CurrentPlayer { get; set; }
-        public PlayerData[] AiPlayers { get; set; }
-        public int CurrentRegion { get; set; }
-        public string RegionText { get; set; }
-        public int AiPlayerCount { get; set; }
-
+        public HumanPlayerData CurrentPlayer { get; set; }
+        public AIPlayerData[] AiPlayers { get; set; }
         public PlayerData[] AllPlayers { get; set; }
+        public List<MonsterGhost> Graveyard { get; set; }
+        public int CurrentRegion { get; set; }
+        public string RegionText
+        {
+            get
+            {
+                return CurrentLevel.locations[CurrentRegion].ParkName;
+            }
+        }  
 
         public GameData(string name, int aiCount)
         {
-            //somehow read file to find next available game ID
-
+            GameDataId = GameRepo.GetNextGameID();
+            
             GameName = name;
             CurrentLevel = new LevelData();
             CurrentPlayer = new HumanPlayerData("New Contestant");
             
             CurrentRegion = 0; //at the lab
-            SetRegionText();
 
-            AiPlayers = new PlayerData[AiPlayerCount];
+            AiPlayers = new AIPlayerData[aiCount];
             GenerateAI(AiPlayers);
             var allPlayers = new PlayerData[aiCount + 1];
             allPlayers[0] = CurrentPlayer;
@@ -38,32 +44,7 @@ namespace DrMangle
             {
                 allPlayers[i + 1] = AiPlayers[i];
             }
-        }
 
-        //public GameData(int GameId)
-        //{
-        //    string name = null;
-        //    LevelData level = null;
-        //    PlayerData player = null;
-        //    PlayerData[] ai = null;
-        //    PlayerData[] all = null;
-
-        //    //somehow read file to get the right gameID
-
-        //    currentRegion = 0; //at the lab
-        //    SetRegionText();
-
-        //    gameName = name;
-        //    currentLevel = level;
-        //    currentPlayer = player;
-
-        //    aiPlayers = ai;
-        //    allPlayers = all;
-        //}
-
-        public void SetRegionText()
-        {
-            RegionText = CurrentLevel.locations[CurrentRegion].ParkName;
         }
 
         private void GenerateAI(PlayerData[] ai)
@@ -99,12 +80,108 @@ namespace DrMangle
             }
         }
 
-        //    Methods
-        //        save state
-        //        load state
-        //        generate tournament matchup
+    }
 
-        //        display tournament matchup
-        //        fight monsters
+    static public class GameRepo
+    {
+        private static string filePath = "C:\\git\\DocMangle\\DrMangle\\bin\\Debug\\Save\\";
+        public static Dictionary<string, int> gameIndex;
+
+        public static void FileSetup()
+        {
+            string indexFile = Path.Combine(filePath, "Index.txt");
+
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            if (!File.Exists(indexFile))
+            {
+                var file = File.Create(indexFile);
+                file.Close();
+            }
+            else
+            {
+                var text = File.ReadAllText(indexFile);
+                gameIndex = JsonConvert.DeserializeObject<Dictionary<string, int>>(text);
+            }
+        }
+
+        public static void SaveGame(GameData gd)
+        {            
+
+            string saveFile = Path.Combine(filePath, "dat_" + gd.GameDataId.ToString() + ".txt");
+            if (!File.Exists(saveFile))
+            {
+                var gameFile = File.Create(saveFile);
+                gameFile.Close();
+                if (gameIndex == null)
+                {
+                    gameIndex = new Dictionary<string, int>() { };
+                }
+                if (!gameIndex.ContainsKey(gd.GameName))
+                {
+                    gameIndex.Add(gd.GameName, gd.GameDataId);
+                    File.WriteAllText(Path.Combine(filePath, "Index.txt"), JsonConvert.SerializeObject(gameIndex, Formatting.Indented));
+                }
+            }
+
+            File.WriteAllText(saveFile, JsonConvert.SerializeObject(gd, Formatting.Indented));
+
+        }
+               
+        public static GameData LoadGame()
+        {
+            GameData data = null;
+            int gameId = 0;
+
+            Console.WriteLine("Would you like to load a previous game?");
+            foreach (var game in gameIndex)
+            {
+                Console.WriteLine(game.Value + " - " + game.Key);
+            }
+            bool halt = true;
+            while (halt)
+            {
+                Console.WriteLine("Please enter the name of the game you would like to load.");
+                string gameName = Console.ReadLine();
+                
+                if (gameIndex.TryGetValue(gameName, out gameId))
+                {
+                    halt = false;
+                }
+                else
+	            {
+                    Console.WriteLine("Invalid game name, please enter the name of a game.");
+                }
+            }
+            string saveFile = Path.Combine(filePath, "dat_" + gameId.ToString() + ".txt");
+
+            if (File.Exists(saveFile))
+            {
+                string fileText = File.ReadAllText(saveFile);
+                data = JsonConvert.DeserializeObject<GameData>(fileText);
+                Console.WriteLine("Load successful!");
+            }
+            
+            return data;
+        }
+               
+        public static int GetNextGameID()
+        {
+            int GameID = 0;
+
+            if (gameIndex == null)
+            {
+                GameID = 0;
+            }
+            else
+            {
+                GameID = gameIndex.Last().Value + 1;
+            }
+
+            return GameID;
+        }
     }
 }
