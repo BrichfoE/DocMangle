@@ -274,8 +274,8 @@ namespace DrMangle
                 names = new string[10] { "Luke", "Matilda", "Martha", "Hannah", "Pete", "Harry", "Rick", "Veronica", "Susan", "Maynard" };
             }
 
-            adjInt = (input * r.Next()) % 10;
-            namInt = (input * r.Next()) % 10;
+            adjInt = (input * r.Next(1, 100)) % 10;
+            namInt = (input * r.Next(1, 100)) % 10;
 
             result = adjectives[adjInt] + " " + names[namInt];
 
