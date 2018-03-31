@@ -36,27 +36,7 @@ namespace DrMangle
             #endregion
 
             #region introCutscene
-            //TalkPause("[You find yourself standing before a stately manor house on tropical island.]");
-            //TalkPause("[The evening is overcast and forebodeing, and you wait outside a grand door.]");
-            //halt = true;
-            //while (halt)
-            //{
-            //    TalkPause("[You wait a moment.]");
-            //    Console.WriteLine("[Do you knock?]Y/N");
-            //    textInput = Console.ReadLine();
-            //    if (textInput == "Y") { halt = false; }
-            //}
-            //TalkPause("[The door opens swiftly, and a small strange man appears.]");
-            //TalkPause("Strangeman: Welcome to the Isle of Dr. Mangle.");
-            //Console.WriteLine("Strangeman:  And your name is?");
-            //GetPlayerName(pd);
-            //TalkPause("Strangeman: Your research fellowship will begin immidiately.");
-            //TalkPause("Strangeman: However, it will not proceed exaclty as advertised.");
-            //"Follow me to the rear of the house."
-            //"[He takes you there]."
-            //"Here is your collection bag.  It has specialized compartments for hauling the materials you will need."
-            //"Specifically, you can only carry six items.  At any time if you say 'Bag' you will look and see what you are carrying."
-            //"Try that now."
+
             #endregion
 
             while (activeGame)
@@ -227,7 +207,7 @@ namespace DrMangle
                     {
                         gd.CurrentPlayer.Bag[bagSlot] = gd.CurrentLevel.locations[gd.CurrentRegion].PartsList.Last();
                         gd.CurrentLevel.locations[gd.CurrentRegion].PartsList.RemoveLast();
-                        Console.WriteLine("You found: " + gd.CurrentPlayer.Bag[bagSlot].partName);
+                        Console.WriteLine("You found: " + gd.CurrentPlayer.Bag[bagSlot].PartName);
                     }
                 }
             }
@@ -303,7 +283,7 @@ namespace DrMangle
                     {
                         table[i] = currentMonster.parts[i];
                         TalkPause("Currently " + currentMonster + " has the below " + type);
-                        Console.WriteLine(currentMonster.parts[i].partName);
+                        Console.WriteLine(currentMonster.parts[i].PartName);
                         Console.WriteLine("Durability: " + currentMonster.parts[i].PartDurability);
                         Console.WriteLine("Alacrity" + currentMonster.parts[i].Stats[0]);
                         Console.WriteLine("Strenght" + currentMonster.parts[i].Stats[1]);
@@ -325,7 +305,7 @@ namespace DrMangle
                     }
                     chosenPart = gd.CurrentPlayer.Bag[intInput - 1];
 
-                    Console.WriteLine(chosenPart.partName);
+                    Console.WriteLine(chosenPart.PartName);
                     if (chosenPart.PartType != (i + 1))
                     {
                         Console.WriteLine("That is not a " + type+ "!");
@@ -383,7 +363,7 @@ namespace DrMangle
             TalkPause("This is your monster...");
             foreach (var part in table)
             {
-                Console.WriteLine(part.partName);
+                Console.WriteLine(part.PartName);
                
             }
             foreach (var stat in newMonster.monsterStats)
@@ -528,23 +508,23 @@ namespace DrMangle
 
                 //strike vs parry, result decreases random part damage
                 float strikeDamage = attackTarget.PartDurability - (strike - parry);
-                Console.WriteLine(attack.Name + " swings at " + reply.Name + "'s " + attackTarget.partName + "!");
+                Console.WriteLine(attack.Name + " swings at " + reply.Name + "'s " + attackTarget.PartName + "!");
                 TalkPause(attackTarget + " goes from " + attackTarget.PartDurability + " to " + (attackTarget.PartDurability - strikeDamage));
                 attackTarget.PartDurability  = attackTarget.PartDurability - strikeDamage;
                 if (attackTarget.PartDurability <= 0)
                 {
-                    TalkPause(attackTarget.partName + " has been destroyed!");
+                    TalkPause(attackTarget.PartName + " has been destroyed!");
                     attackTarget = null;
                 }
 
                 //repost vs block, result decreases random part damage
                 float repostDamage = replyTarget.PartDurability - (repost - block);
-                Console.WriteLine(reply.Name + " counters at " + attack.Name + "'s " + replyTarget.partName + "!");
+                Console.WriteLine(reply.Name + " counters at " + attack.Name + "'s " + replyTarget.PartName + "!");
                 TalkPause(attackTarget + " goes from " + replyTarget.PartDurability + " to " + (replyTarget.PartDurability - repostDamage));
                 replyTarget.PartDurability = replyTarget.PartDurability - repostDamage;
                 if (replyTarget.PartDurability <= 0)
                 {
-                    TalkPause(replyTarget.partName + " has been destroyed!");
+                    TalkPause(replyTarget.PartName + " has been destroyed!");
                     attackTarget = null;
                 }
 
