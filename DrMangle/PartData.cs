@@ -5,7 +5,17 @@ namespace DrMangle
 {
     public class PartData 
     {
-        public string partName;
+        public string PartName
+        {
+            get
+            {
+                string type = Anatomy.typeList[PartType];
+                string structure = Anatomy.structureList[PartStructure];
+                string rarity = Anatomy.rarityList[PartRarity];
+
+                return rarity + " " + structure + " " + type;
+            }
+        }
 
         public int PartType { get; set; }
         public int PartStructure { get; set; }
@@ -20,7 +30,6 @@ namespace DrMangle
             Stats = new float[4];
             GeneratePart();
             GenerateStats();
-            GenerateName();
         }
 
         public PartData(int type, int structure, int rarity) //random stats and durability
@@ -32,8 +41,6 @@ namespace DrMangle
         PartRarity = rarity;
              
         GenerateStats();
-        GenerateName();
-
         }
 
         public PartData(int type, int structure, int rarity, float alacrity, float strength, float endurance, float special, float durability) //defined part
@@ -48,10 +55,7 @@ namespace DrMangle
         Stats[2] = endurance;
         Stats[3] = special;
 
-        PartDurability = durability;
-
-        GenerateName();
-           
+        PartDurability = durability;           
         }
 
         private void GeneratePart()
@@ -200,15 +204,6 @@ namespace DrMangle
                 }
             }
         }
-
-        private void GenerateName()
-        {
-            string type = Anatomy.typeList[PartType];
-            string structure = Anatomy.structureList[PartStructure];
-            string rarity = Anatomy.rarityList[PartRarity];
-
-            partName = rarity + " " + structure + " " + type;
-        }
     }
 
     public class PartComparer : IComparer<PartData>
@@ -295,5 +290,8 @@ namespace DrMangle
                 , "Endurance"
                 , "Technique"
             };
+
+        public static string[] adjectives = new string[10] { "Cool", "Nice", "Mad", "Helpful", "Thin", "Dirty", "Slick", "Ugly", "Super", "Octogenarian" };
+        public static string[] names = new string[10] { "Luke", "Matilda", "Martha", "Hannah", "Pete", "Harry", "Rick", "Veronica", "Susan", "Maynard" };
     }
 }

@@ -54,32 +54,25 @@ namespace MangleTest
             test2.Workshop.Add(new PartData(3, 3, 3));
             test2.Workshop.Add(new PartData(4, 4, 4));
             test2.Workshop.Add(new PartData(5, 4, 5));
-
-            test2.Workshop[0].partName = "0";
-            test2.Workshop[1].partName = "1";
-            test2.Workshop[2].partName = "2";
-            test2.Workshop[3].partName = "3";
-            test2.Workshop[4].partName = "4";
-            test2.Workshop[5].partName = "5";
                     
-            test2.ScrapItem(test2.Workshop, 4);
+            test2.ScrapItem(test2.Workshop, 4); //originally index 5
             TestList(test2, "4");
 
             Assert.IsNull(test2.Workshop[5]);
 
-            test2.ScrapItem(test2.Workshop, 0);
+            test2.ScrapItem(test2.Workshop, 0); //originally index 0
             TestList(test2, "0");
 
-            test2.ScrapItem(test2.Workshop, 2);
+            test2.ScrapItem(test2.Workshop, 2); //originally index 3
             TestList(test2, "3");
 
-            test2.ScrapItem(test2.Workshop, 0);
+            test2.ScrapItem(test2.Workshop, 0); //originally index 1
             TestList(test2, "1");
 
-            test2.ScrapItem(test2.Workshop, 1);
+            test2.ScrapItem(test2.Workshop, 1); //originally index 5
             TestList(test2, "5");
 
-            test2.ScrapItem(test2.Workshop, 0);
+            test2.ScrapItem(test2.Workshop, 0); //originally index 2
             TestList(test2, "2");
 
             Assert.IsNull(test2.Workshop[0]);
