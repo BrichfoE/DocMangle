@@ -119,30 +119,31 @@ namespace MangleTest
         public void ComparerTest()
         {
             //setup
-            GameData gd = new GameData("test", 5);
-            gd.AllPlayers = new PlayerData[6];
+            GameController gc = new GameController();
+            GameData gd = new GameData("test", 5, 1, new Random());
+            var players = new PlayerData[6];
             for (int i = 0; i < 6; i++)
             {
-                gd.AllPlayers[i] = new AIPlayerData(1);
+                players[i] = new AIPlayerData(1);
             }
 
-            gd.AllPlayers[0].Wins = 2;  
-            gd.AllPlayers[1].Wins = 5;  
-            gd.AllPlayers[2].Wins = 3;  
-            gd.AllPlayers[3].Wins = 1;  
-            gd.AllPlayers[4].Wins = 7;  
-            gd.AllPlayers[5].Wins = 4;  
+            players[0].Wins = 2;  
+            players[1].Wins = 5;  
+            players[2].Wins = 3;  
+            players[3].Wins = 1;  
+            players[4].Wins = 7;  
+            players[5].Wins = 4;  
 
             //test
-            gd.SortByWins();
+            gc.SortPlayersByWins(players);
 
             //validate
-            Assert.AreEqual(gd.AllPlayers[0].Wins, 7);
-            Assert.AreEqual(gd.AllPlayers[1].Wins, 5);
-            Assert.AreEqual(gd.AllPlayers[2].Wins, 4);
-            Assert.AreEqual(gd.AllPlayers[3].Wins, 3);
-            Assert.AreEqual(gd.AllPlayers[4].Wins, 2);
-            Assert.AreEqual(gd.AllPlayers[5].Wins, 1);
+            Assert.AreEqual(players[0].Wins, 7);
+            Assert.AreEqual(players[1].Wins, 5);
+            Assert.AreEqual(players[2].Wins, 4);
+            Assert.AreEqual(players[3].Wins, 3);
+            Assert.AreEqual(players[4].Wins, 2);
+            Assert.AreEqual(players[5].Wins, 1);
 
         }
 
@@ -153,7 +154,7 @@ namespace MangleTest
 
             for (int i = 0; i < 5; i++)
             {
-                test.Bag[i] = new PartData();
+                test.Bag[i] = new PartData(new Random());
             }
 
             Assert.AreEqual(test.Workshop.Count, 0);

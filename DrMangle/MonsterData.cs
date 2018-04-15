@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,19 +22,25 @@ namespace DrMangle
 
     public class MonsterData : MonsterBase
     {
-        public PartData[] parts;
-        public float[] monsterStats;
-        
+        public PartData[] Parts {get; set;}
+        public float[] MonsterStats { get; set; }
+
+        [JsonConstructor]
+        public MonsterData()
+        {
+            MonsterStats = new float[4];
+        }
+
         public MonsterData(string newName, PartData[] newParts)
         {
             Name = newName;
-            parts = newParts;
+            Parts = newParts;
 
-            monsterStats = new float[4];
+            MonsterStats = new float[4];
 
-            for (int i = 0; i < monsterStats.Length; i++)
+            for (int i = 0; i < MonsterStats.Length; i++)
             {
-                monsterStats[i] = CalculateStats(i, parts);
+                MonsterStats[i] = CalculateStats(i, Parts);
             }
 
         }
@@ -60,7 +67,7 @@ namespace DrMangle
             bool torso = false;
             bool limb = false;            
 
-            foreach (var part in parts)
+            foreach (var part in Parts)
             {
                 if (part != null && part.PartDurability > 0)
                 {

@@ -1,19 +1,26 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace DrMangle
 {
     public class LevelData
     {
-        public Park[] locations { get; set; }
+        public Park[] Locations { get; set; }
 
+        [JsonConstructor]
         public LevelData()
         {
-            locations = new Park[6];
-            GeneratePark(locations);
-            locations[0] = new Park("Lab", 0);
-            locations[5] = new Park("Arena", 0);
-            AddParts();
+            Locations = new Park[6];
+        }
+
+        public LevelData(Random RNG, int players)
+        {
+            Locations = new Park[6];
+            GeneratePark(Locations);
+            Locations[0] = new Park("Lab", 0);
+            Locations[5] = new Park("Arena", 0);
+            AddParts(RNG, players);
         }
 
         private void GeneratePark(Park[] parks)
@@ -38,7 +45,7 @@ namespace DrMangle
                     default:
                         throw new System.ArgumentException("No name for Park[" + i + "]", "original"); ;
                 }
-                locations[i] = new Park(name, i);
+                Locations[i] = new Park(name, i);
             }
             
         }
@@ -57,19 +64,17 @@ namespace DrMangle
             }
         }
 
-        public void AddParts()
+        public void AddParts(Random RNG, int players)
         {
-            Random r = new Random();
             for (int i = 1; i < 5; i++)
             {
-
-                int roll = r.Next(5, 16);
+                int roll = RNG.Next(1, players * 5);
 
                 for (int j = 0; j < roll; j++)
                 {
-                    PartData newPart = new PartData();
-                    newPart.PartStructure = locations[i].ParkPart;
-                    locations[i].PartsList.AddLast(newPart);
+                    PartData newPart = new PartData(RNG);
+                    newPart.PartStructure = Locations[i].ParkPart;
+                    Locations[i].PartsList.AddLast(newPart);
                 }
             }
             
@@ -79,23 +84,14 @@ namespace DrMangle
         {
             for (int i = 1; i < 5; i++)
             {
-                decimal count = locations[i].PartsList.Count;
+                decimal count = Locations[i].PartsList.Count;
                 for (int j = 0; j < Math.Round((count/2), 0); j++)
                 {
-                    locations[i].PartsList.RemoveFirst();
+                    Locations[i].PartsList.RemoveFirst();
                 }
             }
         }
         
-
-
-
-
-        //Methods
-
-        //    search level for monster parts
-        //    assign remaining monster parts
-
     }
 }
 
