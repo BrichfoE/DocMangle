@@ -36,6 +36,10 @@
         #region Methods
         public abstract void CheckBag();
 
+        public abstract void ScrapItem(PartData[] storage, int reference);
+
+        public abstract void ScrapItem(List<PartData> storage, int reference);
+
         public void DumpBag()
         {
             for (int i = 0; i < this.Bag.Length; i++)
@@ -50,134 +54,17 @@
             this.Workshop.Sort(this.Comparer);
         }
 
-        public void ScrapItem(PartData[] storage, int reference)
-        {
-            PartData part = storage[reference];
-            Random r = new Random();
-            int high = 2;
-            int amount = 1;
-
-            switch (part.PartRarity)
-            {
-                case 0:
-                    high = 1000;
-                    break;
-                case 1:
-                    high = 500;
-                    break;
-                case 2:
-                    high = 200;
-                    break;
-                case 3:
-                    high = 100;
-                    break;
-                case 4:
-                    high = 50;
-                    break;
-                case 5:
-                    high = 10;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartRarity");
-            }
-
-            amount = r.Next(high);
-
-            switch (part.PartStructure)
-            {
-                case 0:
-                    this.Ether = this.Ether + amount;
-                    break;
-                case 1:
-                    this.Biomatter = this.Biomatter + amount;
-                    break;
-                case 2:
-                    this.Meat = this.Meat + amount;
-                    break;
-                case 3:
-                    this.Components = this.Components + amount;
-                    break;
-                case 4:
-                    this.Rocks = this.Rocks + amount;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartStructure");
-            }           
-
-            storage[reference] = null;
-            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.PartStructure] + " parts.");
-        }
-
-        public void ScrapItem(List<PartData> storage, int reference)
-        {
-            PartData part = storage[reference];
-            Random r = new Random();
-            int high = 2;
-            int amount = 1;
-
-            switch (part.PartRarity)
-            {
-                case 0:
-                    high = 1000;
-                    break;
-                case 1:
-                    high = 500;
-                    break;
-                case 2:
-                    high = 200;
-                    break;
-                case 3:
-                    high = 100;
-                    break;
-                case 4:
-                    high = 50;
-                    break;
-                case 5:
-                    high = 10;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartRarity");
-            }
-
-            amount = r.Next(high);
-
-            switch (part.PartStructure)
-            {
-                case 0:
-                    this.Ether = this.Ether + amount;
-                    break;
-                case 1:
-                    this.Biomatter = this.Biomatter + amount;
-                    break;
-                case 2:
-                    this.Meat = this.Meat + amount;
-                    break;
-                case 3:
-                    this.Components = this.Components + amount;
-                    break;
-                case 4:
-                    this.Rocks = this.Rocks + amount;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartStructure");
-            }
-
-            storage[reference] = null;
-            Console.WriteLine("You salvaged " + amount + Anatomy.structureList[part.PartStructure] + " parts.");
-            
-            storage.Sort(this.Comparer);
-        }
-
         public void CheckWorkshop()
         {
             this.Workshop.Sort(this.Comparer);
             Console.WriteLine("Workshop Items:");
+            int count = 1;
             foreach (var part in this.Workshop)
             {
-                int count = 1;
                 if (part != null)
                 {
-                    Console.WriteLine(count + ": " + part.PartName);
+                    Console.WriteLine(count + " - " + part.PartName);
+                    count += 1;
                 }
             }
         }
@@ -201,6 +88,7 @@
                 return 0;
             }
         }
+        #endregion
     }
 
     public class HumanPlayerData : PlayerData
@@ -227,6 +115,124 @@
                     counter = counter + 1;
                 }
             }
+        }
+
+        public override void ScrapItem(PartData[] storage, int reference)
+        {
+            PartData part = storage[reference];
+            Random r = new Random();
+            int high = 2;
+            int amount = 1;
+
+            switch (part.PartRarity)
+            {
+                case 0:
+                    high = 1000;
+                    break;
+                case 1:
+                    high = 500;
+                    break;
+                case 2:
+                    high = 200;
+                    break;
+                case 3:
+                    high = 100;
+                    break;
+                case 4:
+                    high = 50;
+                    break;
+                case 5:
+                    high = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartRarity");
+            }
+
+            amount = r.Next(high);
+
+            switch (part.PartStructure)
+            {
+                case 0:
+                    this.Ether = this.Ether + amount;
+                    break;
+                case 1:
+                    this.Biomatter = this.Biomatter + amount;
+                    break;
+                case 2:
+                    this.Meat = this.Meat + amount;
+                    break;
+                case 3:
+                    this.Components = this.Components + amount;
+                    break;
+                case 4:
+                    this.Rocks = this.Rocks + amount;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartStructure");
+            }
+
+            storage[reference] = null;
+            Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
+        }
+
+        public override void ScrapItem(List<PartData> storage, int reference)
+        {
+            PartData part = storage[reference];
+            Random r = new Random();
+            int high = 2;
+            int amount = 1;
+
+            switch (part.PartRarity)
+            {
+                case 0:
+                    high = 1000;
+                    break;
+                case 1:
+                    high = 500;
+                    break;
+                case 2:
+                    high = 200;
+                    break;
+                case 3:
+                    high = 100;
+                    break;
+                case 4:
+                    high = 50;
+                    break;
+                case 5:
+                    high = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartRarity");
+            }
+
+            amount = r.Next(high);
+
+            switch (part.PartStructure)
+            {
+                case 0:
+                    this.Ether = this.Ether + amount;
+                    break;
+                case 1:
+                    this.Biomatter = this.Biomatter + amount;
+                    break;
+                case 2:
+                    this.Meat = this.Meat + amount;
+                    break;
+                case 3:
+                    this.Components = this.Components + amount;
+                    break;
+                case 4:
+                    this.Rocks = this.Rocks + amount;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartStructure");
+            }
+
+            storage[reference] = null;
+            Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
+
+            storage.Sort(this.Comparer);
         }
     }
 
@@ -276,11 +282,127 @@
             adjInt = (input * r.Next(1, 100)) % 10;
             namInt = (input * r.Next(1, 100)) % 10;
 
-            result = Anatomy.adjectives[adjInt] + " " + Anatomy.names[namInt];
+            result = StaticReference.adjectives[adjInt] + " " + StaticReference.names[namInt];
 
             return result;
         }
 
-    #endregion
+        public override void ScrapItem(PartData[] storage, int reference)
+        {
+            PartData part = storage[reference];
+            Random r = new Random();
+            int high = 2;
+            int amount = 1;
+
+            switch (part.PartRarity)
+            {
+                case 0:
+                    high = 1000;
+                    break;
+                case 1:
+                    high = 500;
+                    break;
+                case 2:
+                    high = 200;
+                    break;
+                case 3:
+                    high = 100;
+                    break;
+                case 4:
+                    high = 50;
+                    break;
+                case 5:
+                    high = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartRarity");
+            }
+
+            amount = r.Next(high);
+
+            switch (part.PartStructure)
+            {
+                case 0:
+                    this.Ether = this.Ether + amount;
+                    break;
+                case 1:
+                    this.Biomatter = this.Biomatter + amount;
+                    break;
+                case 2:
+                    this.Meat = this.Meat + amount;
+                    break;
+                case 3:
+                    this.Components = this.Components + amount;
+                    break;
+                case 4:
+                    this.Rocks = this.Rocks + amount;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartStructure");
+            }
+
+            storage[reference] = null;
+            //Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
+        }
+
+        public override void ScrapItem(List<PartData> storage, int reference)
+        {
+            PartData part = storage[reference];
+            Random r = new Random();
+            int high = 2;
+            int amount = 1;
+
+            switch (part.PartRarity)
+            {
+                case 0:
+                    high = 1000;
+                    break;
+                case 1:
+                    high = 500;
+                    break;
+                case 2:
+                    high = 200;
+                    break;
+                case 3:
+                    high = 100;
+                    break;
+                case 4:
+                    high = 50;
+                    break;
+                case 5:
+                    high = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartRarity");
+            }
+
+            amount = r.Next(high);
+
+            switch (part.PartStructure)
+            {
+                case 0:
+                    this.Ether = this.Ether + amount;
+                    break;
+                case 1:
+                    this.Biomatter = this.Biomatter + amount;
+                    break;
+                case 2:
+                    this.Meat = this.Meat + amount;
+                    break;
+                case 3:
+                    this.Components = this.Components + amount;
+                    break;
+                case 4:
+                    this.Rocks = this.Rocks + amount;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartStructure");
+            }
+
+            storage[reference] = null;
+            //Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
+
+            storage.Sort(this.Comparer);
+        }
     }
 }

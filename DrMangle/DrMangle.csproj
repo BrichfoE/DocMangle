@@ -45,13 +45,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ArenaData.cs" />
+    <Compile Include="GameController.cs" />
     <Compile Include="GameData.cs" />
+    <Compile Include="GameRepo.cs" />
     <Compile Include="MonsterData.cs" />
     <Compile Include="PartData.cs" />
     <Compile Include="LevelData.cs" />
     <Compile Include="PlayerData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="StaticUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

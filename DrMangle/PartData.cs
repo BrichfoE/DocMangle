@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace DrMangle
@@ -9,9 +10,9 @@ namespace DrMangle
         {
             get
             {
-                string type = Anatomy.typeList[PartType];
-                string structure = Anatomy.structureList[PartStructure];
-                string rarity = Anatomy.rarityList[PartRarity];
+                string type = StaticReference.typeList[PartType];
+                string structure = StaticReference.structureList[PartStructure];
+                string rarity = StaticReference.rarityList[PartRarity];
 
                 return rarity + " " + structure + " " + type;
             }
@@ -25,47 +26,54 @@ namespace DrMangle
 
         public float PartDurability { get; set; }
 
-        public PartData() //completely random part
+        [JsonConstructor]
+        public PartData() //empty constructor
         {
             Stats = new float[4];
-            GeneratePart();
+        }
+
+        public PartData(Random RNG) //completely random part
+        {
+            Stats = new float[4];
+            GeneratePart(RNG);
             GenerateStats();
         }
 
         public PartData(int type, int structure, int rarity) //random stats and durability
         {
-        Stats = new float[4];
+            Stats = new float[4];
 
-        PartType = type;
-        PartStructure = structure;
-        PartRarity = rarity;
-             
-        GenerateStats();
+            PartType = type;
+            PartStructure = structure;
+            PartRarity = rarity;
+
+            GenerateStats();
         }
 
-        public PartData(int type, int structure, int rarity, float alacrity, float strength, float endurance, float special, float durability) //defined part
-        { 
+        //[JsonConstructor]
+        //public PartData(int type, int structure, int rarity, float alacrity, float[] stats, float durability)  //defined part
+        //{ 
 
-        PartType = type;
-        PartStructure = structure;
-        PartRarity = rarity;
+        //PartType = type;
+        //PartStructure = structure;
+        //PartRarity = rarity;
 
-        Stats[0] = alacrity;
-        Stats[1] = strength;
-        Stats[2] = endurance;
-        Stats[3] = special;
+        //Stats[0] = stats[0];
+        //Stats[1] = stats[1];
+        //Stats[2] = stats[2];
+        //Stats[3] = stats[3];
 
-        PartDurability = durability;           
-        }
+        //PartDurability = durability;           
+        //}
 
-        private void GeneratePart()
+        private void GeneratePart(Random RNG)
         {
-            Random r = new Random();
+            //Random r = new Random();
             float rarityRoll;
 
-            PartType = r.Next(5);
-            PartStructure = r.Next(4) + 1;
-            rarityRoll = r.Next(1000) + 1;
+            PartType = RNG.Next(0, 5);
+            PartStructure = RNG.Next(0, 4);
+            rarityRoll = RNG.Next(1, 1000);
 
             if (rarityRoll < 500)
             {
@@ -253,45 +261,5 @@ namespace DrMangle
         //}
 
 
-    }
-
-    public static class Anatomy
-    {
-        public static string[] typeList = new string[6]
-            {
-                  "Head"
-                , "Torso"
-                , "Left Arm"
-                , "Right Arm"
-                , "Left Leg"
-                , "Right Leg"
-            };
-        public static string[] structureList = new string[5]
-            {
-                  "Magical"
-                , "Animal"
-                , "Human"
-                , "Mechanical"
-                , "Rock"
-            };
-        public static string[] rarityList = new string[6]
-            {
-                 "Unicorn"
-               , "Mythic"
-               , "Legendary"
-               , "Epic"
-               , "Rare"
-               , "Common"
-            };
-        public static string[] statList = new string[4]
-            {
-                  "Alacrity"
-                , "Strength"
-                , "Endurance"
-                , "Technique"
-            };
-
-        public static string[] adjectives = new string[10] { "Cool", "Nice", "Mad", "Helpful", "Thin", "Dirty", "Slick", "Ugly", "Super", "Octogenarian" };
-        public static string[] names = new string[10] { "Luke", "Matilda", "Martha", "Hannah", "Pete", "Harry", "Rick", "Veronica", "Susan", "Maynard" };
     }
 }

@@ -13,3 +13,4 @@ C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.exe
 C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.pdb
 C:\git\DocMangle\DrMangle\bin\Debug\Newtonsoft.Json.dll
 C:\git\DocMangle\DrMangle\bin\Debug\Newtonsoft.Json.xml
+C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.csprojResolveAssemblyReference.cache
