@@ -8,22 +8,32 @@ namespace DrMangle
 {
     public class GameRepo
     {
-        private string filePath = "C:\\git\\DocMangle\\DrMangle\\bin\\Debug\\Save\\";
+        private readonly string filePath = "C:\\git\\DocMangle\\DrMangle\\bin\\Debug\\Data\\";
+        private int exceptionCount;
         public Dictionary<string, int> gameIndex;
 
         public void FileSetup()
-        {
-            string indexFile = Path.Combine(filePath, "Index.txt");
-
+        {      
             if (!Directory.Exists(filePath))
             {
                 Directory.CreateDirectory(filePath);
             }
+            if (!Directory.Exists(filePath + "Save\\"))
+            {
+                Directory.CreateDirectory(filePath + "Save\\");
+            }
+            if (!Directory.Exists(filePath + "Errors\\"))
+            {
+                Directory.CreateDirectory(filePath + "Errors\\");
+            }
 
+            string indexFile = Path.Combine(filePath, "Save\\Index.txt");
             if (!File.Exists(indexFile))
             {
                 var file = File.Create(indexFile);
                 file.Close();
+                gameIndex = new Dictionary<string, int>();
+                gameIndex.Add("_placeholder", 0);
             }
             else
             {
@@ -34,8 +44,7 @@ namespace DrMangle
 
         public void SaveGame(GameData gd)
         {
-
-            string saveFile = Path.Combine(filePath, "dat_" + gd.GameDataId.ToString() + ".txt");
+            string saveFile = Path.Combine(filePath, "Save\\dat_" + gd.GameDataId.ToString() + ".txt");
             if (!File.Exists(saveFile))
             {
                 var gameFile = File.Create(saveFile);
@@ -47,7 +56,7 @@ namespace DrMangle
                 if (!gameIndex.ContainsKey(gd.GameName))
                 {
                     gameIndex.Add(gd.GameName, gd.GameDataId);
-                    File.WriteAllText(Path.Combine(filePath, "Index.txt"), JsonConvert.SerializeObject(gameIndex, Formatting.Indented));
+                    File.WriteAllText(Path.Combine(filePath, "Save\\Index.txt"), JsonConvert.SerializeObject(gameIndex, Formatting.Indented));
                 }   
             }
 
@@ -62,13 +71,9 @@ namespace DrMangle
             int intInput;
 
             Console.WriteLine("Would you like to load a previous game?");
-            Console.WriteLine("(please enter the number of the game you would like to load)");
             Console.WriteLine("0 - Start New Game");
-            foreach (var game in gameIndex)
-            {
-                Console.WriteLine(game.Value + " - " + game.Key);
-            }
-            intInput = StaticUtility.CheckInput(0, gameIndex.Count);
+            Console.WriteLine("1 - Load a Previous Game");
+            intInput = StaticUtility.CheckInput(0, 1);
             if (intInput == 0)
             {
                 return null;
@@ -77,6 +82,10 @@ namespace DrMangle
             while (halt)
             {
                 Console.WriteLine("Please enter the name of the game you would like to load.");
+                foreach (var game in gameIndex)
+                {
+                    Console.WriteLine(game.Value + " - " + game.Key);
+                }
                 string gameName = Console.ReadLine();
 
                 if (gameIndex.TryGetValue(gameName, out gameId))
@@ -88,7 +97,7 @@ namespace DrMangle
                     Console.WriteLine("Invalid game name, please enter the name of a game.");
                 }
             }
-            string saveFile = Path.Combine(filePath, "dat_" + gameId.ToString() + ".txt");
+            string saveFile = Path.Combine(filePath, "Save\\dat_" + gameId.ToString() + ".txt");
 
             if (File.Exists(saveFile))
             {
@@ -114,6 +123,32 @@ namespace DrMangle
             }
 
             return GameID;
+        }
+
+        public void LogException(GameData gd, string exceptionText, Exception ex, bool willClose)
+        {
+            exceptionCount += 1;
+            string errorFileName = Path.Combine(filePath, "Errors\\dat_" + gd.GameDataId.ToString() + "_Exception" + exceptionCount.ToString() +"_"+ DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss") + ".txt");
+            if (!File.Exists(errorFileName))
+            {
+                var errorFile = File.Create(errorFileName);
+                errorFile.Close();
+            }
+
+            var sw = File.AppendText(errorFileName);
+            sw.WriteLine(exceptionText);
+            sw.WriteLine("Message: " + ex.Message);
+            sw.WriteLine("HelpLink: " + ex.HelpLink);
+            sw.WriteLine("Source: " + ex.Source);
+            sw.WriteLine("TargetSite: " + ex.TargetSite);
+            sw.WriteLine("StackTrace: " + ex.StackTrace);
+            sw.WriteLine("InnerException: " + ex.InnerException);
+            sw.WriteLine(JsonConvert.SerializeObject(gd, Formatting.Indented));
+
+            if (willClose)
+                StaticUtility.TalkPause("Something has gone wrong, the game will now close and unsaved progress will be lost.");
+            else
+                StaticUtility.TalkPause("Error Logged, section skipped.");
         }
     }
 }

@@ -24,7 +24,7 @@ namespace DrMangle
 
         public float[] Stats { get; set; }
 
-        public float PartDurability { get; set; }
+        public decimal PartDurability { get; set; }
 
         [JsonConstructor]
         public PartData() //empty constructor
@@ -172,29 +172,29 @@ namespace DrMangle
 
             switch (PartRarity)
             {
-                case 6:
+                case 0:
                     rarityMult = 500;
-                    PartDurability = 100;
+                    PartDurability = 1;
                     break;
-                case 5:
+                case 1:
                     rarityMult = 200;
-                    PartDurability = ((float)(durabilityRoll/3) + 66) / 100;
+                    PartDurability = (decimal)((durabilityRoll/3) + 66) / 100;
                     break;
-                case 4:
+                case 2:
                     rarityMult = 100;
-                    PartDurability = ((float)(durabilityRoll * .5f) + 50) / 100;
+                    PartDurability = (decimal)((durabilityRoll/2) + 50) / 100;
                     break;
                 case 3:
                     rarityMult = 30;
-                    PartDurability = ((float)((durabilityRoll *.75f) + 25) / 100);
+                    PartDurability = (decimal)((durabilityRoll * (decimal).75) + 25) / 100;
                     break;
-                case 2:
+                case 4:
                     rarityMult = 15;
-                    PartDurability = ((float)((durabilityRoll *.9f) + 10) / 100);
+                    PartDurability = (decimal)((durabilityRoll * (decimal).9) + 10) / 100;
                     break;
                 default:
                     rarityMult = 5;
-                    PartDurability = ((float)(durabilityRoll)) / 100;
+                    PartDurability = (decimal)durabilityRoll / 100;
                     break;
             }
 

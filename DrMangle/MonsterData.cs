@@ -18,6 +18,17 @@ namespace DrMangle
 
     {
         public int DeathDay { get; set; }
+
+        [JsonConstructor]
+        public MonsterGhost() { }
+
+        public MonsterGhost(MonsterData deceased, int day)
+        {
+            Name = deceased.Name;
+            Wins = deceased.Wins;
+            Fights = deceased.Fights;
+            DeathDay = day;
+        }
     }
 
     public class MonsterData : MonsterBase
@@ -53,7 +64,7 @@ namespace DrMangle
             {
                 if (bodyParts[i] != null)
                 {
-                    newStat = newStat + (bodyParts[i].Stats[stat] * bodyParts[i].PartDurability);
+                    newStat = newStat + (bodyParts[i].Stats[stat] * (float)bodyParts[i].PartDurability);
                 }
             }
 
