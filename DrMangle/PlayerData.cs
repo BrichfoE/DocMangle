@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Linq;
 
     public abstract class PlayerData : IComparer<PlayerData>
     {
@@ -19,15 +20,7 @@
         
         public int Luck { get; set; }
 
-        public int Meat { get; set; }
-
-        public int Biomatter { get; set; }
-
-        public int Components { get; set; }
-
-        public int Rocks { get; set; }
-
-        public int Ether { get; set; }
+        public int[] ComponentList { get; set; }
 
         public decimal Money { get; set; }
 
@@ -36,9 +29,14 @@
         #region Methods
         public abstract void CheckBag();
 
-        public abstract void ScrapItem(PartData[] storage, int reference);
-
         public abstract void ScrapItem(List<PartData> storage, int reference);
+
+        public abstract void RepairMonster(int reference);
+
+        public void DumpWorkshopNulls()
+        {
+            this.Workshop = this.Workshop.Where(x => x != null).ToList();
+        }
 
         public void DumpBag()
         {
@@ -88,6 +86,19 @@
                 return 0;
             }
         }
+
+        internal int PartListCount(IEnumerable<PartData> list)
+        {
+            int count = 0;
+            foreach (var item in list)
+            {
+                if (item != null)
+                {
+                    count += 1;
+                }
+            }
+            return count;
+        }
         #endregion
     }
 
@@ -101,6 +112,7 @@
             this.Monster = null;
             this.Bag = new PartData[5];
             this.Workshop = new List<PartData>();
+            this.ComponentList = new int[5];
             this.Comparer = new PartComparer();
         }
 
@@ -115,64 +127,6 @@
                     counter = counter + 1;
                 }
             }
-        }
-
-        public override void ScrapItem(PartData[] storage, int reference)
-        {
-            PartData part = storage[reference];
-            Random r = new Random();
-            int high = 2;
-            int amount = 1;
-
-            switch (part.PartRarity)
-            {
-                case 0:
-                    high = 1000;
-                    break;
-                case 1:
-                    high = 500;
-                    break;
-                case 2:
-                    high = 200;
-                    break;
-                case 3:
-                    high = 100;
-                    break;
-                case 4:
-                    high = 50;
-                    break;
-                case 5:
-                    high = 10;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartRarity");
-            }
-
-            amount = r.Next(high);
-
-            switch (part.PartStructure)
-            {
-                case 0:
-                    this.Ether = this.Ether + amount;
-                    break;
-                case 1:
-                    this.Biomatter = this.Biomatter + amount;
-                    break;
-                case 2:
-                    this.Meat = this.Meat + amount;
-                    break;
-                case 3:
-                    this.Components = this.Components + amount;
-                    break;
-                case 4:
-                    this.Rocks = this.Rocks + amount;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartStructure");
-            }
-
-            storage[reference] = null;
-            Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
         }
 
         public override void ScrapItem(List<PartData> storage, int reference)
@@ -206,33 +160,70 @@
                     throw new Exception("Cannot Scrap Unknown PartRarity");
             }
 
-            amount = r.Next(high);
+            amount = (r.Next(high) * (Int32)(part.PartDurability * 100))/100;
 
-            switch (part.PartStructure)
-            {
-                case 0:
-                    this.Ether = this.Ether + amount;
-                    break;
-                case 1:
-                    this.Biomatter = this.Biomatter + amount;
-                    break;
-                case 2:
-                    this.Meat = this.Meat + amount;
-                    break;
-                case 3:
-                    this.Components = this.Components + amount;
-                    break;
-                case 4:
-                    this.Rocks = this.Rocks + amount;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartStructure");
-            }
+            ComponentList[part.PartStructure] = ComponentList[part.PartStructure] + amount;
 
             storage[reference] = null;
             Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
 
-            storage.Sort(this.Comparer);
+            this.DumpWorkshopNulls();
+           // storage.Sort(this.Comparer);
+        }
+
+        public override void RepairMonster(int reference)
+        {
+            PartData part = Monster.Parts[reference];
+
+            int full = 2;
+            switch (part.PartRarity)
+            {
+                case 0:
+                    full = 1000;
+                    break;
+                case 1:
+                    full = 500;
+                    break;
+                case 2:
+                    full = 200;
+                    break;
+                case 3:
+                    full = 100;
+                    break;
+                case 4:
+                    full = 50;
+                    break;
+                case 5:
+                    full = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Repair Unknown PartRarity");
+            }
+
+            int cost = ((Int32)((1 - part.PartDurability)*100) * full) / 100;
+            if (cost < 0) cost = 0;
+
+            Console.WriteLine("Full repair will cost " + cost + " " + StaticReference.structureList[part.PartStructure] + " parts. You currently have "+ ComponentList[part.PartStructure] + ".");
+            Console.WriteLine("Confirm repair?");
+            Console.WriteLine("1 - Yes");
+            Console.WriteLine("2 - No");
+            int intInput = StaticUtility.CheckInput(1, 2);
+
+            if (intInput == 1)
+            {
+                if (cost <= ComponentList[part.PartStructure])
+                {
+                    ComponentList[part.PartStructure] = ComponentList[part.PartStructure] - cost;
+                    part.PartDurability = 1;
+                }
+                else
+                {
+                    part.PartDurability += (1-part.PartDurability) * (ComponentList[part.PartStructure] / cost);
+                    ComponentList[part.PartStructure] = 0;
+                }
+                Console.WriteLine(part.PartName + " is now at " + part.PartDurability + " durability.");
+                Console.WriteLine("You now have " + ComponentList[part.PartStructure] + " " + StaticReference.structureList[part.PartStructure] + " parts.");
+            }
         }
     }
 
@@ -246,6 +237,7 @@
             this.Monster = null;
             this.Bag = new PartData[5];
             this.Workshop = new List<PartData>();
+            this.ComponentList = new int[5];
             this.Comparer = new PartComparer();
         }
 
@@ -287,64 +279,6 @@
             return result;
         }
 
-        public override void ScrapItem(PartData[] storage, int reference)
-        {
-            PartData part = storage[reference];
-            Random r = new Random();
-            int high = 2;
-            int amount = 1;
-
-            switch (part.PartRarity)
-            {
-                case 0:
-                    high = 1000;
-                    break;
-                case 1:
-                    high = 500;
-                    break;
-                case 2:
-                    high = 200;
-                    break;
-                case 3:
-                    high = 100;
-                    break;
-                case 4:
-                    high = 50;
-                    break;
-                case 5:
-                    high = 10;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartRarity");
-            }
-
-            amount = r.Next(high);
-
-            switch (part.PartStructure)
-            {
-                case 0:
-                    this.Ether = this.Ether + amount;
-                    break;
-                case 1:
-                    this.Biomatter = this.Biomatter + amount;
-                    break;
-                case 2:
-                    this.Meat = this.Meat + amount;
-                    break;
-                case 3:
-                    this.Components = this.Components + amount;
-                    break;
-                case 4:
-                    this.Rocks = this.Rocks + amount;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartStructure");
-            }
-
-            storage[reference] = null;
-            //Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
-        }
-
         public override void ScrapItem(List<PartData> storage, int reference)
         {
             PartData part = storage[reference];
@@ -376,33 +310,60 @@
                     throw new Exception("Cannot Scrap Unknown PartRarity");
             }
 
-            amount = r.Next(high);
+            amount = (r.Next(high) * (Int32)(part.PartDurability * 100)) / 100;
 
-            switch (part.PartStructure)
-            {
-                case 0:
-                    this.Ether = this.Ether + amount;
-                    break;
-                case 1:
-                    this.Biomatter = this.Biomatter + amount;
-                    break;
-                case 2:
-                    this.Meat = this.Meat + amount;
-                    break;
-                case 3:
-                    this.Components = this.Components + amount;
-                    break;
-                case 4:
-                    this.Rocks = this.Rocks + amount;
-                    break;
-                default:
-                    throw new Exception("Cannot Scrap Unknown PartStructure");
-            }
+            ComponentList[part.PartStructure] = ComponentList[part.PartStructure] + amount;
 
-            storage[reference] = null;
+            storage.RemoveAt(reference);
             //Console.WriteLine("You salvaged " + amount + " " + StaticReference.structureList[part.PartStructure] + " parts.");
 
+            this.DumpWorkshopNulls();
             storage.Sort(this.Comparer);
+        }
+
+        public override void RepairMonster(int reference)
+        {
+            PartData part = Monster.Parts[reference];
+
+            int full = 2;
+            switch (part.PartRarity)
+            {
+                case 0:
+                    full = 1000;
+                    break;
+                case 1:
+                    full = 500;
+                    break;
+                case 2:
+                    full = 200;
+                    break;
+                case 3:
+                    full = 100;
+                    break;
+                case 4:
+                    full = 50;
+                    break;
+                case 5:
+                    full = 10;
+                    break;
+                default:
+                    throw new Exception("Cannot Scrap Unknown PartRarity");
+            }
+
+            int cost = ((Int32)((1 - part.PartDurability) * 100) * full) / 100;
+            if (cost < 0) cost = 0;
+            if (cost <= ComponentList[part.PartStructure])
+            {
+                ComponentList[part.PartStructure] = ComponentList[part.PartStructure] - cost;
+                part.PartDurability = 1;
+            }
+            else
+            {
+                part.PartDurability += (1 - part.PartDurability) * (ComponentList[part.PartStructure] / cost);
+                ComponentList[part.PartStructure] = 0;
+            }
+            //Console.WriteLine(part.PartName + " is now at " + part.PartDurability + " durability.");
+            //Console.WriteLine("You now have " + ComponentList[part.PartStructure] + " " + StaticReference.structureList[part.PartStructure] + " parts.");
         }
     }
 }

@@ -13,10 +13,11 @@ namespace DrMangle
         public ArenaData Arena { get; set; }
         public PlayerData[] AllPlayers { get; set; }
         private Random RNG = new Random();
+        private string currentFile = new System.Diagnostics.StackTrace(true).GetFrame(0).GetFileName();
 
         public GameController()
         {
-            string textInput;
+            string textInput = "default";
             int intInput;
 
             Repo = new GameRepo();
@@ -24,14 +25,26 @@ namespace DrMangle
 
             Repo.FileSetup();
             StaticUtility.TalkPause("Welcome to the Isle of Dr. Mangle.");
-            if (Repo.gameIndex != null)
+            if (Repo.gameIndex.Count > 1)
             {
                 Data = Repo.LoadGame();
             }
             if (Data == null)
             {
-                Console.WriteLine("Please enter a name for your game data:");
-                textInput = Console.ReadLine();
+                bool halt = true;
+                while (halt)
+                {
+                    Console.WriteLine("Please enter a name for your game data:");
+                    textInput = Console.ReadLine();
+                    if(Repo.gameIndex.ContainsKey(textInput))
+                    {
+                        Console.WriteLine("A game by that name already exists.");
+                    }
+                    else
+                    {
+                        halt = false;
+                    }
+                }
                 Console.WriteLine("And how many contestants will you be competing against?");
                 intInput = StaticUtility.CheckInput(1, 7);
                 Data = new GameData(textInput, intInput, Repo.GetNextGameID(), RNG);
@@ -45,6 +58,8 @@ namespace DrMangle
             }
         }
 
+        public GameController(bool forTest) { }
+
         public bool RunGame()
         {
             bool gameStatus = true;
@@ -57,35 +72,63 @@ namespace DrMangle
 
             for (int i = 1; i < 6; i++)
             {
-                StaticUtility.TalkPause("It is currently " + i + " o'clock. The parks close at 6.");
-                Data.MoveRegions();
-                gameStatus = ShowSearchOptions(i - 1);
-                AISearchTurn(Data, i);
-                if (!gameStatus)
+                try
                 {
-                    return gameStatus;
+                    StaticUtility.TalkPause("It is currently " + i + " o'clock. The parks close at 6.");
+                    Data.MoveRegions();
+                    gameStatus = ShowSearchOptions(i - 1);
+                    AISearchTurn(Data, i);
+                    if (!gameStatus)
+                    {
+                        return gameStatus;
+                    }
+                }
+                catch (System.Exception ex)
+                {
+                    int currentLine = new System.Diagnostics.StackTrace(true).GetFrame(0).GetFileLineNumber();
+                    Repo.LogException(Data, $"Search Phase exception {currentFile} line {currentLine}", ex, false);
                 }
             }
             #endregion
 
             #region build
-            StaticUtility.TalkPause("It is now 6 o'clock. Return to your lab and prepare for the floorshow at 7.");
-            Data.CurrentRegion = 0;
-            foreach (var player in AllPlayers)
+            try
             {
-                player.DumpBag();
+                StaticUtility.TalkPause("It is now 6 o'clock. Return to your lab and prepare for the floorshow at 7.");
+                Data.CurrentRegion = 0;
+                foreach (var player in AllPlayers)
+                {
+                    player.DumpBag();
+                }
+                Console.WriteLine("Bag contents added to workshop inventory.");
+                gameStatus = ShowLabOptions();
+                if (!gameStatus)
+                {
+                    return gameStatus;
+                }
             }
-            Console.WriteLine("Bag contents added to workshop inventory.");
-            gameStatus = ShowLabOptions();
-            if (!gameStatus)
+            catch (System.Exception ex)
             {
-                return gameStatus;
+                int currentLine = new System.Diagnostics.StackTrace(true).GetFrame(0).GetFileLineNumber();
+                Repo.LogException(Data, $"Player Build Phase exception {currentFile} line {currentLine}\n", ex, false);
             }
-            AIBuildTurn(Data);
+
+            try
+            {
+                AIBuildTurn(Data);
+            }
+            catch (Exception ex)
+            {
+                int currentLine = new System.Diagnostics.StackTrace(true).GetFrame(0).GetFileLineNumber();
+                Repo.LogException(Data, $"AI Build Phase exception {currentFile} line {currentLine}\n", ex, false);
+            }
+
 
             #endregion
 
             #region fight
+            try
+            { 
             StaticUtility.TalkPause("Welcome to the evening's entertainment!");
             if (Data.CurrentPlayer.Monster != null && Data.CurrentPlayer.Monster.CanFight())
             {
@@ -109,34 +152,63 @@ namespace DrMangle
                 Console.WriteLine("Let's find you a comfortable seat.");
             }
             CalculateFights();
-
+            }
+            catch (Exception ex)
+            {
+                int currentLine = new System.Diagnostics.StackTrace(true).GetFrame(0).GetFileLineNumber();
+                Repo.LogException(Data, $"Fighting Phase exception {currentFile} line {currentLine}\n", ex, false);
+            }
             #endregion
 
-            SortPlayersByWins(AllPlayers);
-            Data.CurrentLevel.AddParts(RNG, AllPlayers.Length);
-            Data.CurrentLevel.HalveParts();
-            Repo.SaveGame(Data);
-
+            #region dayEnd
+            try
+            {
+                SortPlayersByWins();
+                Data.CurrentLevel.AddParts(RNG, AllPlayers.Length);
+                Data.CurrentLevel.HalveParts();
+                Data.GameDayNumber++;
+                Repo.SaveGame(Data);
+            }
+            catch (Exception ex)
+            { 
+                int currentLine = new System.Diagnostics.StackTrace(true).GetFrame(0).GetFileLineNumber();
+                Repo.LogException(Data, $"End of Day Phaseexception {currentFile} line {currentLine}\n", ex, false);
+            }          
             return gameStatus;
+            #endregion
         }
 
-        private void AIBuildTurn(GameData data)
+        public void AIBuildTurn(GameData data)
         {
-            foreach (var ai in Data.AiPlayers)
+            foreach (var ai in data.AiPlayers)
             {
-                int start;
+                int start = 0;
                 var monst = new PartData[6];
-                if (ai.Monster == null)
+                if (ai.Monster != null)               
                 {
-                    start = 0;
-                }
-                else
-                {
-                    for (int i = 0; i < 6; i++)
+                    bool betterBody = false;
+                    List<PartData> heads = ai.Workshop.Where(x => x.PartType == 0 && x.PartRarity < ai.Monster.Parts[0].PartRarity).ToList();
+                    List<PartData> torsos = ai.Workshop.Where(x => x.PartType == 1 && x.PartRarity < ai.Monster.Parts[1].PartRarity).ToList();
+                    if (heads.Count > 0 || torsos.Count > 0) betterBody = true;
+
+                    if (betterBody)
                     {
-                        monst[i] = ai.Monster.Parts[i];
+                        data.Graveyard.Add(new MonsterGhost(ai.Monster, data.GameDayNumber));
+                        for (int i = 2; i < ai.Monster.Parts.Length; i++)
+                        {
+                            if(ai.Monster.Parts[i] != null) ai.Workshop.Add(ai.Monster.Parts[i]);
+                        }
+                        ai.Monster = null;
+                        ai.Workshop.Sort(ai.Comparer);
                     }
-                    start = 2;
+                    else
+                    {
+                        for (int i = 0; i < 6; i++)
+                        {
+                            monst[i] = ai.Monster.Parts[i];
+                        }
+                        start = 2;
+                    }
                 }
                 for (int i = start; i < 6; i++)
                 {
@@ -155,13 +227,9 @@ namespace DrMangle
                                 score += newP.Stats[2] - monst[i].Stats[2];
                                 score += newP.Stats[3] - monst[i].Stats[3];
                             }
-                            if (oldP == null || score > 0f)
+                            if ((oldP == null || score > 0f) && newP.PartType == i)
                             {
                                 monst[i] = newP;
-                            }
-                            else
-                            {
-                                ai.ScrapItem(ai.Workshop, j);
                             }
                         }
                     }
@@ -171,12 +239,19 @@ namespace DrMangle
                     if (monst[2] != null || monst[3] != null || monst[4] != null || monst[5] != null)
                     {
                         ai.Monster = new MonsterData(ai.Name + "'s Monster", monst);
+                        for (int i = ai.Workshop.Count - 1; i >= 0; i--)
+                        {
+                            if (ai.Workshop[i] != null)
+                            {
+                                ai.ScrapItem(ai.Workshop, i);
+                            }
+                        }
                     }
                 }
             }
         }
 
-        private void AISearchTurn(GameData gd, int round)
+        public void AISearchTurn(GameData gd, int round)
         {
             foreach (var ai in gd.AiPlayers)
             {
@@ -269,9 +344,11 @@ namespace DrMangle
                 Console.WriteLine("0 - Menu");
                 Console.WriteLine("1 - Work on the monster");
                 Console.WriteLine("2 - Scrap unwanted parts");
-                Console.WriteLine("3 - Head out to the floor show");
+                Console.WriteLine("3 - Repair monster's parts");
+                Console.WriteLine("4 - Head out to the floor show");
 
-                int intInput = StaticUtility.CheckInput(0, 3);
+                int intInput = StaticUtility.CheckInput(0, 4);
+                int answer = 0;
 
                 switch (intInput)
                 {
@@ -286,20 +363,52 @@ namespace DrMangle
                         }
                         else
                         {
-                            BuildMonster(false);
+                            Data.CurrentPlayer.Monster = BuildMonster(false);
                         }
                         break;
                     case 2:
                         Console.WriteLine("Which Item would you like to scrap?");
                         Console.WriteLine("0 - Exit");
                         Data.CurrentPlayer.CheckWorkshop();
-                        int answer = StaticUtility.CheckInput(0, Data.CurrentPlayer.Workshop.Count);
+                        answer = StaticUtility.CheckInput(0, Data.CurrentPlayer.Workshop.Count);
                         if (answer != 0)
                         {
                             Data.CurrentPlayer.ScrapItem(Data.CurrentPlayer.Workshop, answer - 1);
                         }
                         break;
                     case 3:
+                        if (Data.CurrentPlayer.Monster != null)
+                        {
+                            Console.WriteLine("Which Item would you like to repair?");
+                            Console.WriteLine("0 - Exit");
+                            int count = 0;
+                            foreach (var part in Data.CurrentPlayer.Monster.Parts)
+                            {
+                                count++;
+                                if (part != null)
+                                {
+                                    Console.WriteLine(count + " - " + part.PartName + ": Durability " + part.PartDurability);
+                                }
+                            }
+                            answer = StaticUtility.CheckInput(0, 7);
+                            if (answer != 0)
+                            {
+                                if (Data.CurrentPlayer.Monster.Parts[answer-1] == null)
+                                {
+                                    Console.WriteLine("Please pick an existing part to repair that part.");
+                                }
+                                else
+                                {
+                                    Data.CurrentPlayer.RepairMonster(answer - 1);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("You need a monster to repair a monster.");
+                        }
+                        break;
+                    case 4:
                         halt = false;
                         break;
                     default:
@@ -319,18 +428,50 @@ namespace DrMangle
             bool leave = false;
             int loopStart = 0;
             MonsterData currentMonster = Data.CurrentPlayer.Monster;
-            //string newName;
+            List<PartData> workshopCopy = new List<PartData>();
 
             if (isNew)
             {
-                loopStart = 0;
                 Console.WriteLine("You aproach the empty table...");
             }
             else
             {
-                loopStart = 2;
-                Console.WriteLine(currentMonster.Name + " slides onto the table...");
+                Console.WriteLine("Would you like to end " + currentMonster.Name +"'s career?  This is permanent..." );
+                Console.WriteLine("1 - Yes, kill " + currentMonster.Name);
+                Console.WriteLine("2 - No, upgrade limbs");
+                intInput = StaticUtility.CheckInput(1, 2);
+                if (intInput == 2)
+                {
+                    loopStart = 2;
+                    Console.WriteLine(currentMonster.Name + " slides onto the table...");
+                    for (int i = 0; i < 6; i++)
+                    {
+                        table[i] = currentMonster.Parts[i];
+                    }
+                }
+                else
+                {                   
+                    Data.Graveyard.Add(new MonsterGhost(currentMonster, Data.GameDayNumber));
+                    loopStart = 0;
+                    Console.WriteLine("You gently dismember " + currentMonster.Name + " and bury its head and torso in the communal graveyard.");
+                    Console.WriteLine(currentMonster.Name + " will be missed.");
+                    Console.WriteLine("Limbs have been added to your workshop inventory");
+                    for (int i = 2; i < currentMonster.Parts.Length; i++)
+                    {
+                        if (currentMonster.Parts[i] != null)
+                        {
+                            Console.WriteLine(currentMonster.Parts[i].PartName + ", Durability: " + currentMonster.Parts[i].PartDurability);
+                            Data.CurrentPlayer.Workshop.Add(currentMonster.Parts[i]);
+                        }
+                    }
+                    Data.CurrentPlayer.Monster = null;
+                    currentMonster = null;
+                    Data.CurrentPlayer.Workshop.Sort(Data.CurrentPlayer.Comparer);
+                    isNew = true;
+                }
             }
+
+            workshopCopy = Data.CurrentPlayer.Workshop.Select(x => x).ToList();
 
             for (int i = loopStart; i < 6; i++)
             {
@@ -359,25 +500,44 @@ namespace DrMangle
                 }
 
                 halt = true;
+
+                if (!workshopCopy.Any(x => x.PartType == i))
+                {
+                    Console.WriteLine("You do not have a " + type + " in your workshop.");
+                    if (i == 0 || i == 1)
+                    {
+                        Console.WriteLine("A monster without a " + type + " is no moster at all, better luck tomorrow...");
+                        table[0] = null; //this is in case they have a head but no torso
+                        break;
+                    }
+                    halt = false;
+                }
+
                 while (halt)
                 {
-                    if (isNew == false)
+                    if (isNew == false && currentMonster.Parts[i] != null)
                     {
                         table[i] = currentMonster.Parts[i];
-                        StaticUtility.TalkPause("Currently " + currentMonster + " has the below " + type);
+                        StaticUtility.TalkPause("Currently " + currentMonster.Name + " has the below " + type);
                         Console.WriteLine(currentMonster.Parts[i].PartName);
                         Console.WriteLine("Durability: " + currentMonster.Parts[i].PartDurability);
-                        Console.WriteLine("Alacrity" + currentMonster.Parts[i].Stats[0]);
-                        Console.WriteLine("Strenght" + currentMonster.Parts[i].Stats[1]);
-                        Console.WriteLine("Endurance" + currentMonster.Parts[i].Stats[2]);
-                        StaticUtility.TalkPause("Technique" + currentMonster.Parts[i].Stats[3]);
+                        Console.WriteLine("Alacrity: " + currentMonster.Parts[i].Stats[0]);
+                        Console.WriteLine("Strenght: " + currentMonster.Parts[i].Stats[1]);
+                        Console.WriteLine("Endurance: " + currentMonster.Parts[i].Stats[2]);
+                        StaticUtility.TalkPause("Technique: " + currentMonster.Parts[i].Stats[3]);
                     }
 
-                    Console.WriteLine("0 - Exit");
-                    Data.CurrentPlayer.CheckWorkshop();
+                    Console.WriteLine("Workshop Items:");
+                    Console.WriteLine("0 - Leave Table");
+                    int count = 0;
+                    foreach (var item in workshopCopy)
+                    {
+                        count++;
+                        Console.WriteLine(count + " - " + item.PartName);
+                    }
 
-                    StaticUtility.TalkPause("Please choose a " + type + ":");
-                    intInput = StaticUtility.CheckInput(0, Data.CurrentPlayer.Workshop.Count);
+                    Console.WriteLine("Please choose a " + type + ":");
+                    intInput = StaticUtility.CheckInput(0, Data.CurrentPlayer.PartListCount(workshopCopy));
 
                     if (intInput == 0)
                     {
@@ -385,7 +545,7 @@ namespace DrMangle
                         leave = true;
                         break;
                     }
-                    chosenPart = Data.CurrentPlayer.Workshop[intInput - 1];
+                    chosenPart = workshopCopy[intInput - 1];
 
                     Console.WriteLine(chosenPart.PartName);
                     if (chosenPart.PartType != (i))
@@ -395,22 +555,24 @@ namespace DrMangle
                     else
                     {
                         Console.WriteLine("Durability: " + chosenPart.PartDurability);
-                        Console.WriteLine("Alacrity" + chosenPart.Stats[0]);
-                        Console.WriteLine("Strenght" + chosenPart.Stats[1]);
-                        Console.WriteLine("Endurance" + chosenPart.Stats[2]);
-                        StaticUtility.TalkPause("Technique" + chosenPart.Stats[3]);
+                        Console.WriteLine("Alacrity: " + chosenPart.Stats[0]);
+                        Console.WriteLine("Strenght: " + chosenPart.Stats[1]);
+                        Console.WriteLine("Endurance: " + chosenPart.Stats[2]);
+                        StaticUtility.TalkPause("Technique: " + chosenPart.Stats[3]);
                         Console.WriteLine("Use this part?");
                         Console.WriteLine("1 - Yes");
                         Console.WriteLine("2 - No");
                         Console.WriteLine("3 - Skip part");
                         Console.WriteLine("4 - Leave Table");
-                        intInput = StaticUtility.CheckInput(1, 4);
+                        int intInput2 = StaticUtility.CheckInput(1, 4);
 
-                        switch (intInput)
+                        switch (intInput2)
                         {
                             case 1:
+                                if (table[i] != null) workshopCopy.Add(table[i]);
                                 table[i] = chosenPart;
-                                Data.CurrentPlayer.Bag[intInput - 1] = null;
+                                workshopCopy[intInput - 1] = null;
+                                workshopCopy = workshopCopy.Where(x => x != null).ToList();
                                 halt = false;
                                 break;
                             case 2:
@@ -436,7 +598,7 @@ namespace DrMangle
                 }
             }
 
-            if (table[0] != null)
+            if (table[0] != null && table[1] != null)
             {
                 MonsterData newMonster = new MonsterData(null, table);
                 for (int i = 0; i < 4; i++)
@@ -453,18 +615,20 @@ namespace DrMangle
                         Console.WriteLine(part.PartName);
                     } 
                 }
+                int count = 0;
                 foreach (var stat in newMonster.MonsterStats)
                 {
-                    Console.WriteLine(stat);
+                    Console.WriteLine(StaticReference.statList[count] + ": " + stat);
+                    count++;
                 }
                 Console.WriteLine("Would you like to keep this monster?");
-                StaticUtility.TalkPause("1 - Yes, 2 - No");
+                Console.WriteLine("1 - Yes, 2 - No");
                 intInput = StaticUtility.CheckInput(1, 2);
                 if (intInput == 1)
                 {
                     if (isNew)
                     {
-                        StaticUtility.TalkPause("What is its name?");
+                        Console.WriteLine("What is its name?");
                         currentMonster = newMonster;
                         currentMonster.Name = Console.ReadLine();
 
@@ -473,13 +637,15 @@ namespace DrMangle
                     {
                         currentMonster.Parts = table;
                     }
+                    Data.CurrentPlayer.Workshop = workshopCopy.Select(x => x).ToList();
                 }
                 else
                 {
                     Console.WriteLine("Better luck building tomorrow...");
                 }
-            }           
+            }
 
+            Data.CurrentPlayer.DumpWorkshopNulls();
             return currentMonster;
 
         }
@@ -491,9 +657,7 @@ namespace DrMangle
             //find all available competitors
             foreach (var player in AllPlayers)
             {
-                if (player.Monster == null)
-                { }
-                else if (player.Monster.CanFight())
+                if (player.Monster != null && player.Monster.CanFight())
                 {
                     fighters.Enqueue(player);
                 }
@@ -542,7 +706,7 @@ namespace DrMangle
             //apply luck to losers
         }
 
-        public void SortPlayersByWins(PlayerData[] players)
+        public void SortPlayersByWins()
         {
             for (int i = 0; i < AllPlayers.Length; i++)
             {

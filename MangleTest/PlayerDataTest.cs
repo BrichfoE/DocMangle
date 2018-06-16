@@ -7,46 +7,50 @@ namespace MangleTest
     [TestClass]
     public class PlayerDataTest 
     {
+        //[TestMethod]
+        //public void ScrapTestArray()
+        //{
+        //    PlayerData test = new HumanPlayerData("Test");
+        //    test.Bag[0] = new PartData(0, 0, 0);
+        //    test.Bag[1] = new PartData(1, 1, 1);
+        //    test.Bag[2] = new PartData(2, 2, 2);
+        //    test.Bag[3] = new PartData(3, 3, 3);
+        //    test.Bag[4] = new PartData(4, 4, 4);
+
+        //    Assert.AreEqual(0, test.Ether);
+        //    test.ScrapItem(test.Bag, 0);
+        //    Assert.AreNotEqual(0, test.Ether);
+        //    Assert.IsTrue(test.Ether < 1000);
+        //    Assert.IsNull(test.Bag[0]);
+
+        //    Assert.AreEqual(0, test.Meat);
+        //    test.ScrapItem(test.Bag, 2);
+        //    Assert.AreNotEqual(0, test.Meat);
+        //    Assert.IsTrue(test.Meat < 200);
+        //    Assert.IsNull(test.Bag[2]);
+
+        //    Assert.AreEqual(0, test.Components);
+        //    test.ScrapItem(test.Bag, 3);
+        //    Assert.AreNotEqual(0, test.Components);
+        //    Assert.IsTrue(test.Components < 100);
+        //    Assert.IsNull(test.Bag[3]);
+
+        //    Assert.AreEqual(0, test.Biomatter);
+        //    test.ScrapItem(test.Bag, 1);
+        //    Assert.AreNotEqual(0, test.Biomatter);
+        //    Assert.IsTrue(test.Biomatter < 500);
+        //    Assert.IsNull(test.Bag[1]);
+
+        //    Assert.AreEqual(0, test.Rocks);
+        //    test.ScrapItem(test.Bag, 4);
+        //    Assert.AreNotEqual(0, test.Rocks);
+        //    Assert.IsTrue(test.Rocks < 50);
+        //    Assert.IsNull(test.Bag[4]);
+        //}
+
         [TestMethod]
         public void ScrapTest()
         {
-            PlayerData test = new HumanPlayerData("Test");
-            test.Bag[0] = new PartData(0, 0, 0);
-            test.Bag[1] = new PartData(1, 1, 1);
-            test.Bag[2] = new PartData(2, 2, 2);
-            test.Bag[3] = new PartData(3, 3, 3);
-            test.Bag[4] = new PartData(4, 4, 4);
-
-            Assert.AreEqual(0, test.Ether);
-            test.ScrapItem(test.Bag, 0);
-            Assert.AreNotEqual(0, test.Ether);
-            Assert.IsTrue(test.Ether < 1000);
-            Assert.IsNull(test.Bag[0]);
-
-            Assert.AreEqual(0, test.Meat);
-            test.ScrapItem(test.Bag, 2);
-            Assert.AreNotEqual(0, test.Meat);
-            Assert.IsTrue(test.Meat < 200);
-            Assert.IsNull(test.Bag[2]);
-
-            Assert.AreEqual(0, test.Components);
-            test.ScrapItem(test.Bag, 3);
-            Assert.AreNotEqual(0, test.Components);
-            Assert.IsTrue(test.Components < 100);
-            Assert.IsNull(test.Bag[3]);
-
-            Assert.AreEqual(0, test.Biomatter);
-            test.ScrapItem(test.Bag, 1);
-            Assert.AreNotEqual(0, test.Biomatter);
-            Assert.IsTrue(test.Biomatter < 500);
-            Assert.IsNull(test.Bag[1]);
-
-            Assert.AreEqual(0, test.Rocks);
-            test.ScrapItem(test.Bag, 4);
-            Assert.AreNotEqual(0, test.Rocks);
-            Assert.IsTrue(test.Rocks < 50);
-            Assert.IsNull(test.Bag[4]);
-
             PlayerData test2 = new HumanPlayerData("Test2");
             test2.Workshop.Add(new PartData(0, 0, 0));
             test2.Workshop.Add(new PartData(1, 1, 1));
@@ -54,97 +58,76 @@ namespace MangleTest
             test2.Workshop.Add(new PartData(3, 3, 3));
             test2.Workshop.Add(new PartData(4, 4, 4));
             test2.Workshop.Add(new PartData(5, 4, 5));
-                    
+
+            foreach (var part in test2.Workshop)
+            {
+                part.PartDurability = (decimal)0.5;
+            }
+
+            int wsLength = 6;
+
             test2.ScrapItem(test2.Workshop, 4); //originally index 5
-            TestList(test2, "4");
+            wsLength--;
+            TestList(test2, "4", wsLength);
 
-            Assert.IsNull(test2.Workshop[5]);
-
+            wsLength--;
             test2.ScrapItem(test2.Workshop, 0); //originally index 0
-            TestList(test2, "0");
+            TestList(test2, "0", wsLength);
 
+            wsLength--;
             test2.ScrapItem(test2.Workshop, 2); //originally index 3
-            TestList(test2, "3");
+            TestList(test2, "3", wsLength);
 
+            wsLength--;
             test2.ScrapItem(test2.Workshop, 0); //originally index 1
-            TestList(test2, "1");
+            TestList(test2, "1", wsLength);
 
+            wsLength--;
             test2.ScrapItem(test2.Workshop, 1); //originally index 5
-            TestList(test2, "5");
+            TestList(test2, "5", wsLength);
 
+            wsLength--;
             test2.ScrapItem(test2.Workshop, 0); //originally index 2
-            TestList(test2, "2");
+            TestList(test2, "2", wsLength);
 
-            Assert.IsNull(test2.Workshop[0]);
         }
 
-        private static void TestList(PlayerData t2, string index)
+        private static void TestList(PlayerData t2, string index,int workshopLength)
         {
             switch (index)
             {
                 case "0":
-                    Assert.IsTrue(t2.Ether < 1000);
-                    Assert.AreNotEqual(0, t2.Ether);
+                    Assert.IsTrue(t2.ComponentList[0] < 1000);
+                    Assert.AreNotEqual(0, t2.ComponentList[0]);
                     break;
                 case "1":
-                    Assert.IsTrue(t2.Biomatter < 500);
-                    Assert.AreNotEqual(0, t2.Biomatter);
+                    Assert.IsTrue(t2.ComponentList[1] < 500);
+                    Assert.AreNotEqual(0, t2.ComponentList[1]);
                     break;
                 case "2":
-                    Assert.IsTrue(t2.Meat < 200);
-                    Assert.AreNotEqual(0, t2.Meat);
+                    Assert.IsTrue(t2.ComponentList[2] < 200);
+                    Assert.AreNotEqual(0, t2.ComponentList[2]);
                     break;
                 case "3":
-                    Assert.IsTrue(t2.Components < 100);
-                    Assert.AreNotEqual(0, t2.Components);
+                    Assert.IsTrue(t2.ComponentList[3] < 100);
+                    Assert.AreNotEqual(0, t2.ComponentList[3]);
                     break;
                 case "4":
-                    Assert.IsTrue(t2.Rocks < 50);
-                    Assert.AreNotEqual(0, t2.Rocks);
-                    t2.Rocks = 0;
+                    Assert.IsTrue(t2.ComponentList[4] < 50);
+                    Assert.AreNotEqual(0, t2.ComponentList[4]);
+                    t2.ComponentList[4] = 0;
                     break;
                 case "5":
-                    Assert.IsTrue(t2.Rocks < 10);
-                    Assert.AreNotEqual(0, t2.Rocks);
-                    t2.Rocks = 0;
+                    Assert.IsTrue(t2.ComponentList[4] < 10);
+                    Assert.AreNotEqual(0, t2.ComponentList[4]);
+                    t2.ComponentList[4] = 0;
                     break;
                 default:
                     Assert.Fail();
                     break;
             }
-            Assert.IsNull(t2.Workshop[t2.Workshop.Count - 1]);
-        }
 
-        [TestMethod]
-        public void ComparerTest()
-        {
-            //setup
-            GameController gc = new GameController();
-            GameData gd = new GameData("test", 5, 1, new Random());
-            var players = new PlayerData[6];
-            for (int i = 0; i < 6; i++)
-            {
-                players[i] = new AIPlayerData(1);
-            }
-
-            players[0].Wins = 2;  
-            players[1].Wins = 5;  
-            players[2].Wins = 3;  
-            players[3].Wins = 1;  
-            players[4].Wins = 7;  
-            players[5].Wins = 4;  
-
-            //test
-            gc.SortPlayersByWins(players);
-
-            //validate
-            Assert.AreEqual(players[0].Wins, 7);
-            Assert.AreEqual(players[1].Wins, 5);
-            Assert.AreEqual(players[2].Wins, 4);
-            Assert.AreEqual(players[3].Wins, 3);
-            Assert.AreEqual(players[4].Wins, 2);
-            Assert.AreEqual(players[5].Wins, 1);
-
+            Assert.AreEqual(workshopLength, t2.Workshop.Count);
         }
 
         [TestMethod]
@@ -172,6 +155,44 @@ namespace MangleTest
             Assert.IsNull(test.Bag[2]);
             Assert.IsNull(test.Bag[3]);
             Assert.IsNull(test.Bag[4]);
-        }       
+        }
+
+        [TestMethod()]
+        public void RepairMonsterTest()
+        {
+            AIPlayerData test = new AIPlayerData(1);
+
+            test.ComponentList[0] = 450;
+            test.ComponentList[1] = 300;
+            test.ComponentList[2] = 450;
+            test.ComponentList[3] = 10;
+            test.ComponentList[4] = 915;
+
+
+            test.Monster = new MonsterData("test_0", new PartData[] { new PartData(0, 0, 0), new PartData(1, 1, 1), new PartData(2, 2, 2), new PartData(3, 3, 3), new PartData(4, 4, 4), new PartData(5, 4, 5) });
+            for (int i = 0; i < 6; i++)
+            {
+                test.Monster.Parts[i].PartDurability = (decimal)0.5;
+            }
+
+            for (int i = 0; i < 6; i++)
+            {
+                test.RepairMonster(i);
+            }
+
+            Assert.AreEqual((decimal).95, test.Monster.Parts[0].PartDurability);
+            Assert.AreEqual(0, test.ComponentList[0]);
+            Assert.AreEqual((decimal)1, test.Monster.Parts[1].PartDurability);
+            Assert.AreEqual(50, test.ComponentList[1]);
+            Assert.AreEqual((decimal)1, test.Monster.Parts[2].PartDurability);
+            Assert.AreEqual(350, test.ComponentList[2]);
+            Assert.AreEqual((decimal).6, test.Monster.Parts[3].PartDurability);
+            Assert.AreEqual(0, test.ComponentList[3]);
+            Assert.AreEqual((decimal)1, test.Monster.Parts[4].PartDurability);
+            Assert.AreEqual((decimal)1, test.Monster.Parts[5].PartDurability);
+            Assert.AreEqual(885, test.ComponentList[4]);
+        }
+        
+
     }
 }

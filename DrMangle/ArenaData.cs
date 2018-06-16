@@ -17,9 +17,10 @@ namespace DrMangle
             MonsterData bm = blue.Monster;
             MonsterData gm = green.Monster;
 
-            Console.WriteLine("In the blue corner, " + blue.Name + " presents " + blue.Monster.Name);
-            StaticUtility.TalkPause(blue.Monster.Name + "boasts " + blue.Monster.MonsterStats);
-            Console.WriteLine("In the green corner, " + green.Name + " presents " + green.Monster.Name);
+            Console.WriteLine("In the blue corner, " + blue.Name + " presents " + bm.Name);
+            Console.WriteLine(bm.Name + " boasts " + bm.Wins + " wins!");
+            Console.WriteLine("In the green corner, " + green.Name + " presents " + gm.Name);
+            Console.WriteLine(gm.Name + " boasts " + gm.Wins + " wins!");
 
             while (bm.Parts[0].PartDurability > 0 && bm.Parts[1].PartDurability > 0 && gm.Parts[0].PartDurability > 0 && gm.Parts[1].PartDurability > 0)
             {
@@ -36,58 +37,46 @@ namespace DrMangle
                     reply = gm;
                 }
 
-                float strike = (RNG.Next(1, 101) /100) * attack.MonsterStats[1];
-                float parry = (RNG.Next(1, 101) / 100) * reply.MonsterStats[2];
-                float repost = (RNG.Next(1, 101) / 100) * reply.MonsterStats[1];
-                float block = (RNG.Next(1, 101) / 100) * attack.MonsterStats[2];
+                float strike = (RNG.Next(1, 101) * attack.MonsterStats[1]) / 100000;
+                float parry = (RNG.Next(1, 101)  * reply.MonsterStats[2]) / 100000;
+                float repost = (RNG.Next(1, 101) * reply.MonsterStats[1]) / 100000;
+                float block = (RNG.Next(1, 101)  * attack.MonsterStats[2]) / 100000;
                 PartData attackTarget;
                 PartData replyTarget;
 
-                if ((RNG.Next(1, 101)) > (attack.MonsterStats[4] / 10000))
-                {
-                    //add technical to strike to hit head or torso
-                    attackTarget = GetTarget(reply, 5, 0);
-                }
-                else
-                {
-                    attackTarget = GetTarget(reply, 0, 5);
-                }
-                if ((RNG.Next(1, 101)) > (reply.MonsterStats[4] / 10000))
-                {
-                    //add technical to repost to hit head or torso
-                    replyTarget = GetTarget(attack, 5, 0);
-                }
-                else
-                {
-                    replyTarget = GetTarget(attack, 0, 5);
-                }
+                //add technical to strike to hit head or torso
+                attackTarget = GetTarget(reply, attack, (RNG.Next(1, 101)) < (attack.MonsterStats[3] / 10000));
+
+                //add technical to repost to hit head or torso
+                replyTarget = GetTarget(attack, reply, (RNG.Next(1, 101)) < (reply.MonsterStats[3] / 10000));
 
                 //strike vs parry, result decreases random part damage
-                float strikeDamage = attackTarget.PartDurability - (strike - parry);
                 Console.WriteLine(attack.Name + " swings at " + reply.Name + "'s " + attackTarget.PartName + "!");
-                StaticUtility.TalkPause(attackTarget + " goes from " + attackTarget.PartDurability + " to " + (attackTarget.PartDurability - strikeDamage));
-                attackTarget.PartDurability = attackTarget.PartDurability - strikeDamage;
+                Console.WriteLine((strike > parry ? attackTarget.PartName + " goes from " + attackTarget.PartDurability + " to " + (attackTarget.PartDurability - (decimal)((strike - parry)/5)) : attack.Name + " is blocked!"));
+                attackTarget.PartDurability = strike > parry ? attackTarget.PartDurability - (decimal)((strike - parry)/5) : attackTarget.PartDurability;
                 if (attackTarget.PartDurability <= 0)
                 {
-                    StaticUtility.TalkPause(attackTarget.PartName + " has been destroyed!");
+                    Console.WriteLine(attackTarget.PartName + " has been destroyed!");
                     attackTarget = null;
                 }
 
-                //repost vs block, result decreases random part damage
-                float repostDamage = replyTarget.PartDurability - (repost - block);
-                Console.WriteLine(reply.Name + " counters at " + attack.Name + "'s " + replyTarget.PartName + "!");
-                StaticUtility.TalkPause(attackTarget + " goes from " + replyTarget.PartDurability + " to " + (replyTarget.PartDurability - repostDamage));
-                replyTarget.PartDurability = replyTarget.PartDurability - repostDamage;
-                if (replyTarget.PartDurability <= 0)
+                if (reply.Parts[0].PartDurability > 0 && reply.Parts[1].PartDurability > 0)
                 {
-                    StaticUtility.TalkPause(replyTarget.PartName + " has been destroyed!");
-                    attackTarget = null;
-                }
+                    //repost vs block, result decreases random part damage
+                    Console.WriteLine(reply.Name + " counters at " + attack.Name + "'s " + replyTarget.PartName + "!");
+                    Console.WriteLine(repost > block ? (attackTarget + " goes from " + replyTarget.PartDurability + " to " + (replyTarget.PartDurability - (decimal)((repost - block)/5))) : reply.Name + " is blocked!");
+                    replyTarget.PartDurability = repost > block ? replyTarget.PartDurability - (decimal)((repost - block)/5) : replyTarget.PartDurability;
+                    if (replyTarget.PartDurability <= 0)
+                    {
+                        Console.WriteLine(replyTarget.PartName + " has been destroyed!");
+                        attackTarget = null;
+                    }
 
-                for (int i = 0; i < 4; i++)
-                {
-                    bm.MonsterStats[i] = bm.CalculateStats(i, bm.Parts);
-                    gm.MonsterStats[i] = bm.CalculateStats(i, gm.Parts);
+                    for (int i = 0; i < 4; i++)
+                    {
+                        bm.MonsterStats[i] = bm.CalculateStats(i, bm.Parts);
+                        gm.MonsterStats[i] = bm.CalculateStats(i, gm.Parts);
+                    }
                 }
             }
 
@@ -111,28 +100,31 @@ namespace DrMangle
             return winner;
         }
 
-        public PartData GetTarget(MonsterData targetMonster, int start, int end)
+        public PartData GetTarget(MonsterData targetMonster, MonsterData attackingMonster, bool criticalHit)
         {
             PartData target = null;
-            while (target != null)
+            while (target == null)
             {
-                if (start < end)
+                if (criticalHit)
                 {
-                    for (int i = start; i < end + 1; i++)
+                    Console.WriteLine(attackingMonster.Name + " prepares a technical strike!");
+                    for (int i = 0; i < 2; i++)
                     {
-                        if ((RNG.Next(i, end)) == i && targetMonster.Parts[i].PartDurability > 0)
+                        if (targetMonster.Parts[i] != null && (RNG.Next(i, 1)) == i && targetMonster.Parts[i].PartDurability > 0)
                         {
                             target = targetMonster.Parts[i];
+                            break;
                         }
                     }
                 }
                 else
                 {
-                    for (int i = start; i > end - 1; i--)
+                    for (int i = 0; i < targetMonster.Parts.Length; i++)
                     {
-                        if ((RNG.Next(i, end)) == end && targetMonster.Parts[i].PartDurability > 0)
+                        if (targetMonster.Parts[i] != null && (RNG.Next(i, targetMonster.Parts.Length-1)) == i && targetMonster.Parts[i].PartDurability > 0)
                         {
                             target = targetMonster.Parts[i];
+                            break;
                         }
                     }
                 }

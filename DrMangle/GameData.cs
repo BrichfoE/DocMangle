@@ -25,6 +25,7 @@ namespace DrMangle
         public HumanPlayerData CurrentPlayer { get; set; }
         public AIPlayerData[] AiPlayers { get; set; }
         public List<MonsterGhost> Graveyard { get; set; }
+        public int GameDayNumber { get; set; }
 
         [JsonConstructor]
         public GameData() { }
@@ -39,9 +40,11 @@ namespace DrMangle
             GenerateAI(AiPlayers);
 
             CurrentLevel = new LevelData(RNG, AiPlayers.Length + 1);
-            CurrentPlayer = new HumanPlayerData("New Contestant");
+            CurrentPlayer = new HumanPlayerData(name);
+            Graveyard = new List<MonsterGhost>();
 
             CurrentRegion = 0; //at the lab
+            GameDayNumber = 0;
         }
 
         private void GenerateAI(PlayerData[] ai)
