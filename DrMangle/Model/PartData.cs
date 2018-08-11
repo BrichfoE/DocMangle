@@ -50,22 +50,6 @@ namespace DrMangle
             GenerateStats();
         }
 
-        //[JsonConstructor]
-        //public PartData(int type, int structure, int rarity, float alacrity, float[] stats, float durability)  //defined part
-        //{ 
-
-        //PartType = type;
-        //PartStructure = structure;
-        //PartRarity = rarity;
-
-        //Stats[0] = stats[0];
-        //Stats[1] = stats[1];
-        //Stats[2] = stats[2];
-        //Stats[3] = stats[3];
-
-        //PartDurability = durability;           
-        //}
-
         private void GeneratePart(Random RNG)
         {
             //Random r = new Random();

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace DrMangle
 {
-    public class ArenaData
+    public class ArenaBattleCalculator
     {
         private Random RNG = new Random();
 
@@ -70,12 +70,6 @@ namespace DrMangle
                     {
                         Console.WriteLine(replyTarget.PartName + " has been destroyed!");
                         attackTarget = null;
-                    }
-
-                    for (int i = 0; i < 4; i++)
-                    {
-                        bm.MonsterStats[i] = bm.CalculateStats(i, bm.Parts);
-                        gm.MonsterStats[i] = bm.CalculateStats(i, gm.Parts);
                     }
                 }
             }

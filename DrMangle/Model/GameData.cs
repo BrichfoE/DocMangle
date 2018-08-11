@@ -12,8 +12,8 @@ namespace DrMangle
     {
         public string GameName { get; set; }
         public int GameDataId { get; set; }
-        public LevelData CurrentLevel { get; set; }
-        public ArenaData Arena { get; set; }
+        public ParkManager CurrentLevel { get; set; }
+        public ArenaBattleCalculator Arena { get; set; }
         public int CurrentRegion { get; set; }
         public string RegionText
         {
@@ -22,8 +22,8 @@ namespace DrMangle
                 return CurrentLevel.Locations[CurrentRegion].ParkName;
             }
         }
-        public HumanPlayerData CurrentPlayer { get; set; }
-        public AIPlayerData[] AiPlayers { get; set; }
+        public PlayerData CurrentPlayer { get; set; }
+        public PlayerData[] AiPlayers { get; set; }
         public List<MonsterGhost> Graveyard { get; set; }
         public int GameDayNumber { get; set; }
 
@@ -36,11 +36,11 @@ namespace DrMangle
 
             GameName = name;
 
-            AiPlayers = new AIPlayerData[aiCount];
+            AiPlayers = new PlayerData[aiCount];
             GenerateAI(AiPlayers);
 
-            CurrentLevel = new LevelData(RNG, AiPlayers.Length + 1);
-            CurrentPlayer = new HumanPlayerData(name);
+            CurrentLevel = new ParkManager(RNG, AiPlayers.Length + 1);
+            CurrentPlayer = new PlayerData(name, false);
             Graveyard = new List<MonsterGhost>();
 
             CurrentRegion = 0; //at the lab
@@ -51,7 +51,7 @@ namespace DrMangle
         {
             for (int i = 0; i < ai.Length; i++)
             {
-                ai[i] = new AIPlayerData(i);
+                ai[i] = new PlayerData("rando", true);
             }
         }
 

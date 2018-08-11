@@ -1,4 +1,5 @@
 ﻿using DrMangle;
+using DrMangle.Service;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -16,11 +17,12 @@ namespace MangleTest
         {
             //setup
             GameController gc = new GameController(true);
+            PlayerManager pm = new PlayerManager();
             GameData gd = new GameData("test", 5, 1, new Random());
             gc.AllPlayers = new PlayerData[6];
             for (int i = 0; i < 6; i++)
             {
-                gc.AllPlayers[i] = new AIPlayerData(1);
+                gc.AllPlayers[i] = new PlayerData("rand", true);
             }
 
             gc.AllPlayers[0].Wins = 2;
@@ -50,21 +52,21 @@ namespace MangleTest
             GameController gc = new GameController(true);
             GameData gd = new GameData("test", 3, 1, new Random());
 
-            var testAISuccess = new AIPlayerData(1);
+            var testAISuccess = new PlayerData("rand", true);
             testAISuccess.Name = "Success";
             for (int i = 0; i < 6; i++)
             {
                 testAISuccess.Workshop.Add(new PartData(5 - i, 1, i));
             }
 
-            var testAIFailure = new AIPlayerData(1);
+            var testAIFailure = new PlayerData("rand", true);
             testAIFailure.Name = "Failure";
             for (int i = 0; i < 2; i++)
             {
                 testAIFailure.Workshop.Add(new PartData(5 - i, 1, i));
             }
 
-            var testAIUpgrade = new AIPlayerData(1);
+            var testAIUpgrade = new PlayerData("rand", true);
             testAIUpgrade.Name = "Upgrade";
             testAIUpgrade.Workshop.Add(new PartData(4, 1, 0));
             testAIUpgrade.Workshop.Add(new PartData(5, 1, 5));
@@ -75,7 +77,7 @@ namespace MangleTest
             }
             testAIUpgrade.Monster = new MonsterData("testMonst", partsHolder);
 
-            gd.AiPlayers = new AIPlayerData[3] { testAISuccess, testAIFailure, testAIUpgrade };
+            gd.AiPlayers = new PlayerData[3] { testAISuccess, testAIFailure, testAIUpgrade };
             var expected = new PartData[6];
             for (int i = 0; i < 6; i++)
             {

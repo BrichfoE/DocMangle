@@ -14,14 +14,14 @@ namespace MangleTest
         [TestMethod]
         public void TestFightCalculation()
         {
-            ArenaData arena = new ArenaData();
+            ArenaBattleCalculator arena = new ArenaBattleCalculator();
 
             List<PlayerData> fighters = new List<PlayerData>();
-            fighters.Add(new HumanPlayerData("TestHuman"));
+            fighters.Add(new PlayerData("TestHuman", false));
             fighters[0].Monster = new MonsterData("test_0", new PartData[] { new PartData(0, 1, 0), new PartData(1, 1, 0), new PartData(2, 1, 0), new PartData(3, 1, 0) });
             for (int i = 1; i < 6; i++)
             {
-                fighters.Add(new AIPlayerData(i));
+                fighters.Add(new PlayerData("rand", true));
                 fighters[i].Monster = new MonsterData("test_" + i, new PartData[] { new PartData(0, 1, i), new PartData(1, 1, i), new PartData(2, 1, i), new PartData(3, 1, i), });
             }
 
