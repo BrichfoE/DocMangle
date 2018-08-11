@@ -34,44 +34,52 @@ namespace DrMangle
     public class MonsterData : MonsterBase
     {
         public PartData[] Parts {get; set;}
-        public float[] MonsterStats { get; set; }
+        private float[] _monsterStats;
+        public float[] MonsterStats { get
+            {
+                return CalculateStats();
+            }
+            private set
+            {
+                MonsterStats = _monsterStats;
+            }
+        }
+        public bool CanFight { get 
+            {
+                return CanFightNow();
+            }
+        }
 
         [JsonConstructor]
         public MonsterData()
         {
-            MonsterStats = new float[4];
+            _monsterStats = new float[4];
         }
 
         public MonsterData(string newName, PartData[] newParts)
         {
             Name = newName;
             Parts = newParts;
-
-            MonsterStats = new float[4];
-
-            for (int i = 0; i < MonsterStats.Length; i++)
-            {
-                MonsterStats[i] = CalculateStats(i, Parts);
-            }
-
+            _monsterStats = new float[4];
         }
 
-        public float CalculateStats(int stat, PartData[] bodyParts)
+        private float[] CalculateStats()
         {
-            float newStat = 0;
-
-            for (int i = 0; i < bodyParts.Length; i++)
+            var newStat = new float[_monsterStats.Length];
+            for (int j = 0; j < _monsterStats.Length; j++)
             {
-                if (bodyParts[i] != null)
+                for (int i = 0; i < Parts.Length; i++)
                 {
-                    newStat = newStat + (bodyParts[i].Stats[stat] * (float)bodyParts[i].PartDurability);
+                    if (Parts[i] != null)
+                    {
+                        newStat[j] = newStat[j] + (Parts[i].Stats[j] * (float)Parts[i].PartDurability);
+                    }
                 }
             }
-
             return newStat;
         }
 
-        public bool CanFight()
+        private bool CanFightNow()
         {
             bool canFight = false;
             bool head = false;

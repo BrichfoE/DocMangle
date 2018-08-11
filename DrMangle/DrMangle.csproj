@@ -51,22 +51,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ArenaData.cs" />
-    <Compile Include="GameController.cs" />
-    <Compile Include="GameData.cs" />
-    <Compile Include="GameRepo.cs" />
-    <Compile Include="MonsterData.cs" />
-    <Compile Include="PartData.cs" />
-    <Compile Include="LevelData.cs" />
-    <Compile Include="PlayerData.cs" />
+    <Compile Include="Model\ParkData.cs" />
+    <Compile Include="Service\ArenaBattleCalculator.cs" />
+    <Compile Include="Service\GameController.cs" />
+    <Compile Include="Model\GameData.cs" />
+    <Compile Include="Service\PlayerManager.cs" />
+    <Compile Include="Shared\GameRepo.cs" />
+    <Compile Include="Model\MonsterData.cs" />
+    <Compile Include="Model\PartData.cs" />
+    <Compile Include="Service\ParkManager.cs" />
+    <Compile Include="Model\PlayerData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StaticReference.cs" />
-    <Compile Include="StaticUtility.cs" />
+    <Compile Include="Shared\StaticReference.cs" />
+    <Compile Include="Shared\StaticUtility.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="MangleDiagram.cd" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ViewModel\" />
+    <Folder Include="View\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

@@ -1,0 +1,123 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Services">
+    <Position X="11.332" Y="0.5" Height="0.291" Width="4.615" />
+  </Comment>
+  <Comment CommentText="Models">
+    <Position X="0.517" Y="0.547" Height="0.291" Width="9.418" />
+  </Comment>
+  <Comment CommentText="Shared">
+    <Position X="8.54" Y="6.238" Height="0.291" Width="4.932" />
+  </Comment>
+  <Class Name="DrMangle.ArenaBattleCalculator">
+    <Position X="12.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>IAAAAAAAACAAAAAAAAAAAAAAAAAAQAAAAAAAAAQAAAA=</HashCode>
+      <FileName>Service\ArenaBattleCalculator.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.GameController">
+    <Position X="11.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAQABBCAAAAABABAAAAAAQABAAAIQBAAAAQgQAABAAA=</HashCode>
+      <FileName>Service\GameController.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.GameData">
+    <Position X="7" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAwAAAAAgIAQAAAQAEAAAACAAggBAAAAA=</HashCode>
+      <FileName>Model\GameData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.ParkManager">
+    <Position X="12.75" Y="3.25" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Nested Types" Collapsed="false" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAAAAAAgIAAAAAAAAAAAAAAAgAAAAAAAA=</HashCode>
+      <FileName>Service\ParkManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.PartData">
+    <Position X="5.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>ABAgAABAAAAAAAAAAAAAAAQAAAQAAAAAAAgAAAAAgAg=</HashCode>
+      <FileName>Model\PartData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.PartComparer" BaseTypeListCollapsed="true">
+    <Position X="5.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
+      <FileName>Model\PartData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="DrMangle.MonsterBase">
+    <Position X="2" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAIAAAAAAAAAAQAAAAAAAAgAAAAAAAAAAA=</HashCode>
+      <FileName>Model\MonsterData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.MonsterGhost">
+    <Position X="0.5" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\MonsterData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.MonsterData">
+    <Position X="2" Y="3.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAgAABAACAAgAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\MonsterData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.GameRepo">
+    <Position X="8.5" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAEAAQAAAAAAAAAAAAAAAGAEAAAAAAAAAAABE=</HashCode>
+      <FileName>Shared\GameRepo.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.StaticReference">
+    <Position X="10.25" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAYAAAAAACAAAAAAAACAAIAIA=</HashCode>
+      <FileName>Shared\StaticReference.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.StaticUtility">
+    <Position X="12" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAA=</HashCode>
+      <FileName>Shared\StaticUtility.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.Model.ParkData">
+    <Position X="8.5" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAQAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Model\ParkData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DrMangle.PlayerData">
+    <Position X="4" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>CAAQAAAAAAgIAAAAACAAAARIAAAAAAAgAgBAAAAEAQA=</HashCode>
+      <FileName>Model\PlayerData.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="DrMangle.Service.PlayerManager">
+    <Position X="14.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAEAAAAACgQAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Service\PlayerManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using DrMangle;
+using DrMangle.Service;
 
 namespace MangleTest 
 {
@@ -51,7 +52,8 @@ namespace MangleTest
         [TestMethod]
         public void ScrapTest()
         {
-            PlayerData test2 = new HumanPlayerData("Test2");
+            PlayerData test2 = new PlayerData("Test2", false);
+            PlayerManager test2man = new PlayerManager();
             test2.Workshop.Add(new PartData(0, 0, 0));
             test2.Workshop.Add(new PartData(1, 1, 1));
             test2.Workshop.Add(new PartData(2, 2, 2));
@@ -66,28 +68,28 @@ namespace MangleTest
 
             int wsLength = 6;
 
-            test2.ScrapItem(test2.Workshop, 4); //originally index 5
+            test2man.ScrapItem(test2, test2.Workshop, 4); //originally index 5
             wsLength--;
             TestList(test2, "4", wsLength);
 
             wsLength--;
-            test2.ScrapItem(test2.Workshop, 0); //originally index 0
+            test2man.ScrapItem(test2, test2.Workshop, 0); //originally index 0
             TestList(test2, "0", wsLength);
 
             wsLength--;
-            test2.ScrapItem(test2.Workshop, 2); //originally index 3
+            test2man.ScrapItem(test2, test2.Workshop, 2); //originally index 3
             TestList(test2, "3", wsLength);
 
             wsLength--;
-            test2.ScrapItem(test2.Workshop, 0); //originally index 1
+            test2man.ScrapItem(test2, test2.Workshop, 0); //originally index 1
             TestList(test2, "1", wsLength);
 
             wsLength--;
-            test2.ScrapItem(test2.Workshop, 1); //originally index 5
+            test2man.ScrapItem(test2, test2.Workshop, 1); //originally index 5
             TestList(test2, "5", wsLength);
 
             wsLength--;
-            test2.ScrapItem(test2.Workshop, 0); //originally index 2
+            test2man.ScrapItem(test2, test2.Workshop, 0); //originally index 2
             TestList(test2, "2", wsLength);
 
         }
@@ -133,7 +135,8 @@ namespace MangleTest
         [TestMethod]
         public void DumpTest()
         {
-            PlayerData test = new HumanPlayerData("Test");
+            PlayerData test = new PlayerData("Test", false);
+            PlayerManager testMan = new PlayerManager();
 
             for (int i = 0; i < 5; i++)
             {
@@ -147,7 +150,7 @@ namespace MangleTest
             Assert.IsNotNull(test.Bag[3]);
             Assert.IsNotNull(test.Bag[4]);
             
-            test.DumpBag();
+            testMan.DumpBag(test);
 
             Assert.AreEqual(test.Workshop.Count, 5);
             Assert.IsNull(test.Bag[0]);
@@ -160,7 +163,8 @@ namespace MangleTest
         [TestMethod()]
         public void RepairMonsterTest()
         {
-            AIPlayerData test = new AIPlayerData(1);
+            PlayerData test = new PlayerData("rand", true);
+            PlayerManager testMan = new PlayerManager();
 
             test.ComponentList[0] = 450;
             test.ComponentList[1] = 300;
@@ -177,7 +181,7 @@ namespace MangleTest
 
             for (int i = 0; i < 6; i++)
             {
-                test.RepairMonster(i);
+                testMan.RepairMonster(test, i);
             }
 
             Assert.AreEqual((decimal).95, test.Monster.Parts[0].PartDurability);

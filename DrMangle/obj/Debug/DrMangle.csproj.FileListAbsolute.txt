@@ -18,3 +18,15 @@ C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.csproj.CopyComplete
 C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.exe
 C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.pdb
 C:\git\DocMangle\DrMangle\obj\Debug\DrMangle.csprojAssemblyReference.cache
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\DrMangle.exe.config
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\DrMangle.exe
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\DrMangle.pdb
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\Newtonsoft.Json.dll
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\nunit.framework.dll
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\Newtonsoft.Json.xml
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\nunit.framework.pdb
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\bin\Debug\nunit.framework.xml
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\obj\Debug\DrMangle.csproj.CoreCompileInputs.cache
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\obj\Debug\DrMangle.csproj.CopyComplete
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\obj\Debug\DrMangle.exe
+C:\Users\ebric\Source\repos\DocMangle\DrMangle\obj\Debug\DrMangle.pdb

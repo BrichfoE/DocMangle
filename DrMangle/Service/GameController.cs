@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DrMangle.Service;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +11,8 @@ namespace DrMangle
     {
         public GameData Data { get; set; }
         public GameRepo Repo { get; set; }
-        public ArenaData Arena { get; set; }
+        public ArenaBattleCalculator Arena { get; set; }
+        public PlayerManager PlayerManager { get; set; }
         public PlayerData[] AllPlayers { get; set; }
         private Random RNG = new Random();
         private string currentFile = new System.Diagnostics.StackTrace(true).GetFrame(0).GetFileName();
@@ -21,7 +23,8 @@ namespace DrMangle
             int intInput;
 
             Repo = new GameRepo();
-            Arena = new ArenaData();
+            Arena = new ArenaBattleCalculator();
+            PlayerManager = new PlayerManager();
 
             Repo.FileSetup();
             StaticUtility.TalkPause("Welcome to the Isle of Dr. Mangle.");
@@ -58,7 +61,10 @@ namespace DrMangle
             }
         }
 
-        public GameController(bool forTest) { }
+        public GameController(bool forTest) {
+            Arena = new ArenaBattleCalculator();
+            PlayerManager = new PlayerManager();
+        }
 
         public bool RunGame()
         {
@@ -98,7 +104,7 @@ namespace DrMangle
                 Data.CurrentRegion = 0;
                 foreach (var player in AllPlayers)
                 {
-                    player.DumpBag();
+                    PlayerManager.DumpBag(player);
                 }
                 Console.WriteLine("Bag contents added to workshop inventory.");
                 gameStatus = ShowLabOptions();
@@ -130,7 +136,7 @@ namespace DrMangle
             try
             { 
             StaticUtility.TalkPause("Welcome to the evening's entertainment!");
-            if (Data.CurrentPlayer.Monster != null && Data.CurrentPlayer.Monster.CanFight())
+            if (Data.CurrentPlayer.Monster != null && Data.CurrentPlayer.Monster.CanFight)
             {
                 Console.WriteLine("Would you like to particpate tonight?");
                 StaticUtility.TalkPause("1 - Yes, 2 - No");
@@ -243,7 +249,7 @@ namespace DrMangle
                         {
                             if (ai.Workshop[i] != null)
                             {
-                                ai.ScrapItem(ai.Workshop, i);
+                                PlayerManager.ScrapItem(ai, ai.Workshop, i);
                             }
                         }
                     }
@@ -306,7 +312,7 @@ namespace DrMangle
                         searching = false;
                         break;
                     case 3:
-                        Data.CurrentPlayer.CheckBag();
+                        PlayerManager.CheckBag(Data.CurrentPlayer);
                         break;
                     case 4:
                         Data.MoveRegions();
@@ -369,11 +375,11 @@ namespace DrMangle
                     case 2:
                         Console.WriteLine("Which Item would you like to scrap?");
                         Console.WriteLine("0 - Exit");
-                        Data.CurrentPlayer.CheckWorkshop();
+                        PlayerManager.CheckWorkshop(Data.CurrentPlayer);
                         answer = StaticUtility.CheckInput(0, Data.CurrentPlayer.Workshop.Count);
                         if (answer != 0)
                         {
-                            Data.CurrentPlayer.ScrapItem(Data.CurrentPlayer.Workshop, answer - 1);
+                            PlayerManager.ScrapItem(Data.CurrentPlayer, Data.CurrentPlayer.Workshop, answer - 1);
                         }
                         break;
                     case 3:
@@ -399,7 +405,7 @@ namespace DrMangle
                                 }
                                 else
                                 {
-                                    Data.CurrentPlayer.RepairMonster(answer - 1);
+                                    PlayerManager.RepairMonster(Data.CurrentPlayer, answer - 1);
                                 }
                             }
                         }
@@ -601,11 +607,6 @@ namespace DrMangle
             if (table[0] != null && table[1] != null)
             {
                 MonsterData newMonster = new MonsterData(null, table);
-                for (int i = 0; i < 4; i++)
-                {
-                    newMonster.MonsterStats[i] = newMonster.CalculateStats(i, newMonster.Parts);
-                }
-
 
                 StaticUtility.TalkPause("This is your monster...");
                 foreach (var part in table)
@@ -645,7 +646,7 @@ namespace DrMangle
                 }
             }
 
-            Data.CurrentPlayer.DumpWorkshopNulls();
+            PlayerManager.DumpWorkshopNulls(Data.CurrentPlayer);
             return currentMonster;
 
         }
@@ -657,7 +658,7 @@ namespace DrMangle
             //find all available competitors
             foreach (var player in AllPlayers)
             {
-                if (player.Monster != null && player.Monster.CanFight())
+                if (player.Monster != null && player.Monster.CanFight)
                 {
                     fighters.Enqueue(player);
                 }
