@@ -52,7 +52,9 @@ namespace DrMangle
 
         [JsonConstructor]
         public MonsterData()
-        {        }
+        {
+            _monsterStats = new float[4];
+        }
 
         public MonsterData(string newName, PartData[] newParts)
         {
